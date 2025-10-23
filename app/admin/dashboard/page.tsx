@@ -10,6 +10,7 @@ import AdminBlogsList from "@/components/admin/blogs-list"
 import AdminOrdersTable from "@/components/admin/orders-table"
 import ProductsManager from "@/components/admin/products-manager"
 import BannersManager from "@/components/admin/banners-manager"
+import MenusManager from "@/components/admin/menus-manager"
 
 export const metadata: Metadata = {
   title: "Admin Dashboard | NH360",
@@ -143,6 +144,7 @@ export default async function AdminDashboard() {
                   <TabsTrigger value="orders">Orders</TabsTrigger>
                   <TabsTrigger value="products">Products</TabsTrigger>
                   <TabsTrigger value="banners">Banners</TabsTrigger>
+                  <TabsTrigger value="menus">Menus</TabsTrigger>
                   <TabsTrigger value="leads">Leads</TabsTrigger>
                   <TabsTrigger value="support">Support</TabsTrigger>
                   <TabsTrigger value="blog">Blog</TabsTrigger>
@@ -180,6 +182,11 @@ export default async function AdminDashboard() {
                 {/* Banners */}
                 <TabsContent value="banners">
                   <BannersManager />
+                </TabsContent>
+
+                {/* Menus */}
+                <TabsContent value="menus">
+                  <MenusManager />
                 </TabsContent>
 
                 {/* Leads from Buy flow */}

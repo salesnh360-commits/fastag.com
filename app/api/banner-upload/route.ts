@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from "next/server"
 import fs from "fs"
 import path from "path"
+import { isAdmin } from "@/lib/api-auth"
 
 export const runtime = "nodejs"
 
 export async function POST(req: NextRequest) {
   try {
+    if (!isAdmin(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     const form = await req.formData()
     const file = form.get("file") as File | null
     if (!file) return NextResponse.json({ error: "file is required" }, { status: 400 })
@@ -24,4 +26,3 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: e?.message || "upload failed" }, { status: 500 })
   }
 }
-

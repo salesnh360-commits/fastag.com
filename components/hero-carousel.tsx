@@ -56,8 +56,9 @@ export function HeroCarousel() {
   const [isTransitioning, setIsTransitioning] = useState(false)
   const [selectedProduct, setSelectedProduct] = useState<any>(null)
   const [isProductModalOpen, setIsProductModalOpen] = useState(false)
+  const [dynamicSlides, setDynamicSlides] = useState<HeroSlide[] | null>(null)
 
-  const slides: HeroSlide[] = [
+  const fallbackSlides: HeroSlide[] = [
     {
       id: 1,
       badge: "NH360 FASTag",
@@ -155,23 +156,67 @@ export function HeroCarousel() {
   const nextSlide = () => {
     if (isTransitioning) return
     setIsTransitioning(true)
-    setCurrentSlide((prev) => (prev + 1) % slides.length)
+    const total = (dynamicSlides?.length || fallbackSlides.length)
+    setCurrentSlide((prev) => (prev + 1) % total)
     setTimeout(() => setIsTransitioning(false), 500)
   }
 
   const prevSlide = () => {
     if (isTransitioning) return
     setIsTransitioning(true)
-    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length)
+    const total = (dynamicSlides?.length || fallbackSlides.length)
+    setCurrentSlide((prev) => (prev - 1 + total) % total)
     setTimeout(() => setIsTransitioning(false), 500)
   }
 
   useEffect(() => {
+    // Try to load dynamic banners
+    fetch("/api/banners", { cache: "no-store" })
+      .then(r => r.ok ? r.json() : null)
+      .then((rows) => {
+        if (!Array.isArray(rows) || rows.length === 0) return
+        const mapped: HeroSlide[] = rows
+          .filter((r: any) => r.active)
+          .sort((a:any,b:any)=>(a.sort_order??0)-(b.sort_order??0))
+          .map((b: any, i: number) => ({
+          id: b.id,
+          badge: b.title || "",
+          title: b.title || "",
+          subtitle: b.subtitle || "",
+          // Keep description optional (no fallback to subtitle to avoid repetition)
+          description: b.description || "",
+          primaryButton: { text: b.link ? "Learn more" : "Explore", action: "shop", href: b.link || "#buy" },
+          secondaryButton: { text: "Contact", href: "/contact" },
+          rating: 5,
+          reviews: "",
+          additionalInfo: "",
+          startingPrice: "",
+          image: b.image_url || "/placeholder.jpg",
+          imageAlt: b.title || "Banner",
+        }))
+        if (mapped.length) setDynamicSlides(mapped)
+      })
+      .catch(() => {})
     const interval = setInterval(nextSlide, 6000)
     return () => clearInterval(interval)
   }, [])
 
-  const currentSlideData = slides[currentSlide]
+  const slides = dynamicSlides && dynamicSlides.length ? dynamicSlides : fallbackSlides
+  // Clamp currentSlide when data source/length changes
+  useEffect(() => {
+    const total = slides.length
+    if (currentSlide >= total) {
+      setCurrentSlide(0)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slides.length])
+
+  // Safe access to current slide data
+  const currentSlideData = slides[currentSlide] ?? slides[0]
+  const subtitleText = (currentSlideData?.subtitle || "").trim()
+  const descriptionText = (currentSlideData?.description || "").trim()
+  const showSubtitle = subtitleText.length > 0
+  const showDescription = descriptionText.length > 0 && descriptionText !== subtitleText
 
   const handlePrimaryButtonClick = () => {
     if (currentSlideData.primaryButton.action === "product" && currentSlideData.product) {
@@ -182,7 +227,7 @@ export function HeroCarousel() {
 
   return (
     <>
-      <section className="bg-gradient-to-br from-black to-neutral-950 py-16 lg:py-24 relative overflow-hidden">
+      <section className="bg-gradient-to-br from-orange-50 to-white py-16 lg:py-24 relative overflow-hidden">
         <div className="container mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-12 items-center min-h-[600px]">
             {/* Text Content */}
@@ -198,14 +243,20 @@ export function HeroCarousel() {
                   </Badge>
 
                   <div className="space-y-2">
-                    <h1 className="text-4xl lg:text-6xl font-bold text-white leading-tight">
+                    <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 leading-tight">
                       {currentSlideData.title}
-                      <br />
-                      <span className="text-orange-600">{currentSlideData.subtitle}</span>
+                      {showSubtitle && (
+                        <>
+                          <br />
+                          <span className="text-orange-600">{subtitleText}</span>
+                        </>
+                      )}
                     </h1>
                   </div>
 
-                  <p className="text-xl text-gray-300 leading-relaxed max-w-2xl">{currentSlideData.description}</p>
+                  {showDescription && (
+                    <p className="text-xl text-gray-700 leading-relaxed max-w-2xl">{descriptionText}</p>
+                  )}
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-4">
@@ -242,35 +293,37 @@ export function HeroCarousel() {
                   <div className="flex items-center space-x-2">
                     <div className="flex items-center space-x-1">
                       <Star className="h-5 w-5 fill-orange-400 text-orange-400" />
-                      <span className="font-bold text-white text-base">{currentSlideData.rating}/5</span>
+                      <span className="font-bold text-gray-900 text-base">{currentSlideData.rating}/5</span>
                     </div>
-                    <span className="text-gray-400">({currentSlideData.reviews})</span>
+                    <span className="text-gray-600">({currentSlideData.reviews})</span>
                   </div>
-                  <div className="text-gray-400 font-medium">{currentSlideData.additionalInfo}</div>
+                  <div className="text-gray-600 font-medium">{currentSlideData.additionalInfo}</div>
                 </div>
               </div>
             </div>
 
             {/* Image Content */}
-            <div className="relative">
+            <div className="relative w-full max-w-[800px] aspect-[4/3] mx-auto">
               <div
-                className={`relative transition-all duration-500 ease-in-out ${
+                className={`relative h-full transition-all duration-500 ease-in-out ${
                   isTransitioning ? "opacity-0 transform scale-95" : "opacity-100 transform scale-100"
                 }`}
               >
-                <Image
-                  src={currentSlideData.image || "/placeholder.svg"}
-                  alt={currentSlideData.imageAlt}
-                  width={800}
-                  height={600}
-                  className="rounded-2xl shadow-2xl w-full h-auto"
-                  priority
-                />
+                <div className="absolute inset-0 rounded-2xl shadow-2xl overflow-hidden bg-white">
+                  <Image
+                    src={currentSlideData.image || "/placeholder.svg"}
+                    alt={currentSlideData.imageAlt}
+                    fill
+                    sizes="(min-width: 1024px) 800px, 92vw"
+                    style={{ objectFit: "cover", objectPosition: "center" }}
+                    priority
+                  />
+                </div>
 
                 {/* Price Badge */}
-                <div className="absolute -bottom-6 -left-6 bg-black p-6 rounded-xl shadow-xl border border-orange-900">
-                  <div className="text-sm text-gray-300 font-medium">Starting from</div>
-                  <div className="text-3xl font-bold text-orange-500">{currentSlideData.startingPrice}</div>
+                <div className="absolute bottom-6 left-6 bg-white/95 backdrop-blur p-4 rounded-xl shadow-xl border border-orange-200">
+                  <div className="text-sm text-gray-700 font-medium">Starting from</div>
+                  <div className="text-3xl font-bold text-orange-600">{currentSlideData.startingPrice}</div>
                 </div>
               </div>
             </div>

@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen bg-black text-gray-200">
+    <main className="min-h-screen bg-white text-gray-900">
       <HeroCarousel />
 
       {/* Trust & Issuers */}
@@ -31,8 +31,8 @@ export default function HomePage() {
           <div className="grid md:grid-cols-3 gap-6 text-center">
             {[{ k: "FASTags Issued", v: "5,000+" }, { k: "Recharge Assisted", v: "10,000+" }, { k: "Fleets Served", v: "900+" }].map((s) => (
               <CardSpotlight key={s.k}>
-                <div className="text-3xl font-extrabold text-white">{s.v}</div>
-                <div className="text-sm text-gray-400">{s.k}</div>
+                <div className="text-3xl font-extrabold text-gray-900">{s.v}</div>
+                <div className="text-sm text-gray-600">{s.k}</div>
               </CardSpotlight>
             ))}
           </div>
@@ -41,7 +41,7 @@ export default function HomePage() {
             <div className="text-xs uppercase tracking-wider text-gray-400 mb-3 text-center">Supported Issuers</div>
             <div className="flex flex-wrap items-center justify-center gap-2">
               {["HDFC Bank", "ICICI Bank", "IDFC FIRST", "SBI", "Axis Bank", "Kotak", "Paytm", "Airtel Payments Bank"].map((n) => (
-                <span key={n} className="text-xs md:text-sm px-3 py-1.5 rounded-full border border-orange-900 text-gray-300 bg-neutral-950">{n}</span>
+                <span key={n} className="text-xs md:text-sm px-3 py-1.5 rounded-full border border-orange-200 text-orange-700 bg-orange-50">{n}</span>
               ))}
             </div>
           </div>
@@ -57,10 +57,10 @@ export default function HomePage() {
               { t: "Recharge Assistance", d: "Support for all issuers" },
               { t: "Fleet Solutions", d: "Bulk issuance & reports" },
             ].map((f, i) => (
-              <div key={i} className="rounded-xl border border-orange-900 bg-neutral-900 p-6 shadow-sm hover:shadow-md transition-shadow">
+              <div key={i} className="rounded-xl border border-orange-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow">
                 <div className="w-10 h-10 rounded-md bg-orange-500/20 text-orange-300 flex items-center justify-center mb-3">{i + 1}</div>
-                <h3 className="text-lg font-semibold text-white">{f.t}</h3>
-                <p className="text-gray-400">{f.d}</p>
+                <h3 className="text-lg font-semibold text-gray-900">{f.t}</h3>
+                <p className="text-gray-600">{f.d}</p>
               </div>
             ))}
           </div>
@@ -70,17 +70,17 @@ export default function HomePage() {
       {/* How It Works */}
       <section className="py-16">
         <div className="container mx-auto px-4">
-          <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-8">How it works</h2>
+          <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900 mb-8">How it works</h2>
           <div className="grid md:grid-cols-3 gap-6">
             {[
               { t: "Share Details", d: "Tell us about your vehicle and city." },
               { t: "KYC & Issuer", d: "We guide you through KYC and bank selection." },
               { t: "Activation", d: "Tag is activated and ready for tolls." },
             ].map((s, i) => (
-              <div key={i} className="rounded-xl border border-orange-900 bg-neutral-900 p-6">
+              <div key={i} className="rounded-xl border border-orange-200 bg-white p-6">
                 <div className="w-8 h-8 rounded-md bg-orange-500/20 text-orange-300 flex items-center justify-center mb-3">{i + 1}</div>
-                <h3 className="text-lg font-semibold text-white">{s.t}</h3>
-                <p className="text-gray-400 text-sm">{s.d}</p>
+                <h3 className="text-lg font-semibold text-gray-900">{s.t}</h3>
+                <p className="text-gray-600 text-sm">{s.d}</p>
               </div>
             ))}
           </div>
@@ -91,8 +91,8 @@ export default function HomePage() {
       <section id="buy" className="py-16 border-t border-orange-900/50">
         <div className="container mx-auto px-4 grid lg:grid-cols-2 gap-8 items-start">
           <div className="space-y-4">
-            <h2 className="text-2xl md:text-3xl font-extrabold text-white">Buy FASTag</h2>
-            <p className="text-gray-400">Sameâ€‘day activation with doorstep KYC assistance for all vehicle classes.</p>
+            <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900">Buy FASTag</h2>
+            <p className="text-gray-600">Same-day activation with doorstep KYC assistance for all vehicle classes.</p>
             <ul className="space-y-2 text-sm">
               {[
                 "New tag issuance for cars, LCVs, trucks and buses",
@@ -110,12 +110,12 @@ export default function HomePage() {
               </Button>
             </div>
           </div>
-          <Card className="border-orange-900 bg-neutral-900">
+          <Card className="border-orange-200 bg-white">
             <CardContent className="p-6 space-y-3">
-              <div className="text-sm text-gray-400">Why NH360 FASTag?</div>
+              <div className="text-sm text-gray-600">Why NH360 FASTag?</div>
               <div className="grid sm:grid-cols-2 gap-3 text-sm">
                 {["PANâ€‘India assistance", "24Ã—7 expert support", "Bulk / fleet issuance", "Dispute help"].map((x) => (
-                  <div key={x} className="rounded-lg border border-orange-900/60 bg-neutral-950 p-3 text-gray-300">{x}</div>
+                  <div key={x} className="rounded-lg border border-orange-200 bg-orange-50 p-3 text-gray-700">{x}</div>
                 ))}
               </div>
             </CardContent>
@@ -127,8 +127,8 @@ export default function HomePage() {
       <section id="recharge" className="py-16">
         <div className="container mx-auto px-4 grid lg:grid-cols-2 gap-8 items-start">
           <div className="space-y-4">
-            <h2 className="text-2xl md:text-3xl font-extrabold text-white">Recharge FASTag</h2>
-            <p className="text-gray-400">Top up any bankâ€™s FASTag. Get help with failed recharges and reversals.</p>
+            <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900">Recharge FASTag</h2>
+            <p className="text-gray-600">Top up any bank's FASTag. Get help with failed recharges and reversals.</p>
             <ul className="space-y-2 text-sm">
               {["Recharge across all issuers", "Assistance for payment failures / reversals", "Instant help on disputes"].map((t) => (
                 <li key={t} className="flex items-center gap-2">
@@ -142,12 +142,12 @@ export default function HomePage() {
               </Button>
             </div>
           </div>
-          <Card className="border-orange-900 bg-neutral-900">
+          <Card className="border-orange-200 bg-white">
             <CardContent className="p-6 space-y-3">
-              <div className="text-sm text-gray-400">Common issues we fix</div>
+              <div className="text-sm text-gray-600">Common issues we fix</div>
               <div className="grid sm:grid-cols-2 gap-3 text-sm">
                 {["Wallet not reflecting", "UPI/PG failure", "Reversal delays", "Bank app errors"].map((x) => (
-                  <div key={x} className="rounded-lg border border-orange-900/60 bg-neutral-950 p-3 text-gray-300">{x}</div>
+                  <div key={x} className="rounded-lg border border-orange-200 bg-orange-50 p-3 text-gray-700">{x}</div>
                 ))}
               </div>
             </CardContent>
@@ -158,7 +158,7 @@ export default function HomePage() {
       {/* Services */}
       <section id="services" className="py-16 border-t border-orange-900/50">
         <div className="container mx-auto px-4">
-          <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-8">Services</h2>
+          <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900 mb-8">Services</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               { t: "KYC Update", d: "Update KYC or change vehicle/owner details", href: "/buy" },
@@ -166,10 +166,10 @@ export default function HomePage() {
               { t: "Tag Replacement", d: "Replace damaged or lost FASTag", href: "/buy" },
               { t: "Dispute Help", d: "Toll doubleâ€‘charge or debit disputes", href: "/recharge" },
             ].map((c) => (
-              <Card key={c.t} className="border-orange-900 bg-neutral-900">
+              <Card key={c.t} className="border-orange-200 bg-white">
                 <CardContent className="p-6 space-y-3">
-                  <h3 className="text-lg font-semibold text-white">{c.t}</h3>
-                  <p className="text-gray-400 text-sm">{c.d}</p>
+                  <h3 className="text-lg font-semibold text-gray-900">{c.t}</h3>
+                  <p className="text-gray-600 text-sm">{c.d}</p>
                   <Button asChild className="bg-orange-600 hover:bg-orange-700 text-white w-full">
                     <Link href={c.href}>Start</Link>
                   </Button>
@@ -181,7 +181,7 @@ export default function HomePage() {
       </section>
 
       {/* Products (from API) */}
-      <section id="products" className="py-16 bg-black text-gray-200 border-y border-orange-900">
+      <section id="products" className="py-16 bg-white text-gray-900 border-y border-orange-200">
         <div className="container mx-auto px-4">
           {/* @ts-expect-error Async Server Component */}
           <DBProductsCarousel />
@@ -191,7 +191,7 @@ export default function HomePage() {
       <section id="blog" className="py-16">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl md:text-3xl font-extrabold text-white">From the blog</h2>
+            <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900">From the blog</h2>
             <Link href="/blog" className="text-orange-400 hover:text-orange-300 text-sm">View all</Link>
           </div>
           <BlogCarousel />
@@ -201,19 +201,19 @@ export default function HomePage() {
       {/* FAQ */}
       <section id="faq" className="py-16 border-t border-orange-900/50">
         <div className="container mx-auto px-4">
-          <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-4">FAQ</h2>
-          <Accordion type="single" collapsible className="bg-neutral-900/60 rounded-xl border border-orange-900">
+          <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900 mb-4">FAQ</h2>
+          <Accordion type="single" collapsible className="bg-orange-50 rounded-xl border border-orange-200">
             <AccordionItem value="q1">
-              <AccordionTrigger className="px-4 text-left text-white">How fast can I get a FASTag?</AccordionTrigger>
-              <AccordionContent className="px-4 text-gray-300">Most tags are activated the same day once KYC is complete.</AccordionContent>
+              <AccordionTrigger className="px-4 text-left text-gray-900">How fast can I get a FASTag?</AccordionTrigger>
+              <AccordionContent className="px-4 text-gray-700">Most tags are activated the same day once KYC is complete.</AccordionContent>
             </AccordionItem>
             <AccordionItem value="q2">
-              <AccordionTrigger className="px-4 text-left text-white">Do you support all issuers?</AccordionTrigger>
-              <AccordionContent className="px-4 text-gray-300">Yes, we assist across major banks including HDFC, ICICI, SBI, Axis, IDFC FIRST, Kotak, Paytm and more.</AccordionContent>
+              <AccordionTrigger className="px-4 text-left text-gray-900">Do you support all issuers?</AccordionTrigger>
+              <AccordionContent className="px-4 text-gray-700">Yes, we assist across major banks including HDFC, ICICI, SBI, Axis, IDFC FIRST, Kotak, Paytm and more.</AccordionContent>
             </AccordionItem>
             <AccordionItem value="q3">
-              <AccordionTrigger className="px-4 text-left text-white">Can you help with blacklist or disputes?</AccordionTrigger>
-              <AccordionContent className="px-4 text-gray-300">We help resolve blacklist due to KYC/low balance and assist with toll doubleâ€‘charge or debit disputes.</AccordionContent>
+              <AccordionTrigger className="px-4 text-left text-gray-900">Can you help with blacklist or disputes?</AccordionTrigger>
+              <AccordionContent className="px-4 text-gray-700">We help resolve blacklist due to KYC/low balance and assist with toll double-charge or debit disputes.</AccordionContent>
             </AccordionItem>
           </Accordion>
         </div>
@@ -255,11 +255,10 @@ async function DBProductsCarousel() {
         }))
       : []
 
-    return (
+  return (
       <ProductCarousel
         title="FASTag Products"
         subtitle="Live catalogue"
-        dark
         showDots={false}
         products={products as any}
       />

@@ -14,7 +14,7 @@ export default function TextHoverLogo({
     <div className={`group inline-flex select-none items-center ${className}`} aria-label={text}>
       <div className="relative">
         {/* Base text */}
-        <div className="font-extrabold tracking-tight text-xl md:text-2xl leading-none text-white transition group-hover:opacity-0">
+        <div className="font-extrabold tracking-tight text-xl md:text-2xl leading-none text-gray-900 transition group-hover:opacity-0">
           {letters.map((ch, i) => (
             <span
               key={i}

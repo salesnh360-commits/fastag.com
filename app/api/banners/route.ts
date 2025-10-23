@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { db } from "@/lib/db"
+import { isAdmin } from "@/lib/api-auth"
 
 export const runtime = "nodejs"
 
@@ -26,6 +27,7 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
+  if (!isAdmin(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   await ensure()
   const body = await req.json()
   const { title, subtitle, image_url, link, sort_order = 0, active = 1 } = body || {}
@@ -38,6 +40,7 @@ export async function POST(req: NextRequest) {
 }
 
 export async function PUT(req: NextRequest) {
+  if (!isAdmin(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   await ensure()
   const body = await req.json()
   const { id, title, subtitle, image_url, link, sort_order, active } = body || {}
@@ -56,10 +59,10 @@ export async function PUT(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
+  if (!isAdmin(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   await ensure()
   const { id } = await req.json()
   if (!id) return NextResponse.json({ error: "id required" }, { status: 400 })
   await db.query("DELETE FROM banners WHERE id=?", [id])
   return NextResponse.json({ success: true })
 }
-

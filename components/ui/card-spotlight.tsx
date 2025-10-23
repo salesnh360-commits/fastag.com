@@ -41,7 +41,7 @@ export function CardSpotlight({ className, children, ...props }: Props) {
       onMouseLeave={onLeave}
       onPointerLeave={onLeave}
       className={cn(
-        "group relative overflow-hidden rounded-xl border border-orange-900 bg-neutral-950 p-6 transition-colors",
+        "group relative overflow-hidden rounded-xl border border-orange-200 bg-white p-6 transition-colors",
         className
       )}
       {...props}
@@ -52,7 +52,7 @@ export function CardSpotlight({ className, children, ...props }: Props) {
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "radial-gradient(180px circle at 20% 20%, rgba(251,146,60,0.10), transparent 60%)",
+            "radial-gradient(180px circle at 20% 20%, rgba(251,146,60,0.08), transparent 60%)",
         }}
       />
 
@@ -68,7 +68,7 @@ export function CardSpotlight({ className, children, ...props }: Props) {
       />
 
       {/* Subtle inner ring */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 rounded-xl ring-1 ring-inset ring-white/5" />
+      <div aria-hidden className="pointer-events-none absolute inset-0 rounded-xl ring-1 ring-inset ring-orange-100" />
 
       {/* Content */}
       <div className="relative z-10">{children}</div>
