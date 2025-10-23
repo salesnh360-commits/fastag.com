@@ -21,13 +21,24 @@ export default function ProductsManager() {
   }
   useEffect(() => { load() }, [])
 
+  const normalizeDriveUrl = (url?: string) => {
+    if (!url) return url
+    try {
+      const m1 = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)\//)
+      if (m1 && m1[1]) return `https://drive.google.com/uc?export=view&id=${m1[1]}`
+      const m2 = url.match(/drive\.(?:google|usercontent)\.com\/.*[?&]id=([^&#]+)/)
+      if (m2 && m2[1]) return `https://drive.google.com/uc?export=view&id=${decodeURIComponent(m2[1])}`
+      return url
+    } catch { return url }
+  }
+
   const create = async () => {
     setCreating(true)
     try {
       const r = await fetch("/api/products", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, rating: 0, reviews: 0, features: [], specifications: [], benefits: [], technology: [], certifications: [], suitable_for: [], care_instructions: [], why_choose: [], in_stock: 1 }),
+        body: JSON.stringify({ ...form, image_url: normalizeDriveUrl(form.image_url), rating: 0, reviews: 0, features: [], specifications: [], benefits: [], technology: [], certifications: [], suitable_for: [], care_instructions: [], why_choose: [], in_stock: 1 }),
       })
       const j = await r.json()
       if (!r.ok) throw new Error(j?.error || "failed")
@@ -96,7 +107,7 @@ export default function ProductsManager() {
                   <TableCell className="text-gray-300">{p.id}</TableCell>
                   <TableCell className="text-gray-300">
                     {p.image_url ? (
-                      <img src={p.image_url} alt="img" className="h-12 w-12 object-cover rounded" />
+                      <img src={normalizeDriveUrl(p.image_url)} alt="img" className="h-12 w-12 object-cover rounded" />
                     ) : (
                       <input type="file" accept="image/*" onChange={(e) => e.target.files?.[0] && uploadImage(p.id, e.target.files![0])} />
                     )}
@@ -123,4 +134,3 @@ export default function ProductsManager() {
     </div>
   )
 }
-

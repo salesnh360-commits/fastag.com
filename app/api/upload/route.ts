@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+import { uploadBufferToDrive, ensureFolder } from '@/lib/googleDrive';
+import { db } from '@/lib/db';
 
 export const config = {
   api: {
@@ -24,28 +24,34 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'No files uploaded' }, { status: 400 });
   }
 
-  const uploadDir = type === 'image'
-    ? path.join(process.cwd(), 'public', 'images', 'products', productId)
-    : path.join(process.cwd(), 'public', 'videos', 'products', productId);
+  // Determine product name for folder
+  let folderName = `Product-${productId}`;
+  try {
+    const [rows] = await db.query("SELECT name FROM products WHERE id = ? LIMIT 1", [productId]);
+    const arr = rows as Array<{ name?: string }>
+    if (arr?.[0]?.name) {
+      // Sanitize folder name (avoid slashes and quotes)
+      folderName = String(arr[0].name).replace(/[\\/:*?"<>|]/g, '-').trim() || folderName
+    }
+  } catch {}
 
-  if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
-  }
+  // Ensure product folder exists and upload to Drive
+  await ensureFolder(folderName)
 
   const urls: string[] = [];
   for (const file of files) {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
-    const ext = file.name.split('.').pop();
+    const ext = (file.name.split('.').pop() || 'bin').toLowerCase();
     const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-    const filePath = path.join(uploadDir, filename);
 
-    fs.writeFileSync(filePath, buffer);
-
-    const publicUrl = type === 'image'
-      ? `/images/products/${productId}/${filename}`
-      : `/videos/products/${productId}/${filename}`;
-    urls.push(publicUrl);
+    const { url } = await uploadBufferToDrive({
+      buffer,
+      filename,
+      mimeType: (file as any).type || undefined,
+      folderName,
+    })
+    urls.push(url);
   }
 
   return NextResponse.json({ urls });

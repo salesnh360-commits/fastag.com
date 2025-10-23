@@ -31,10 +31,18 @@ export async function POST(req: NextRequest) {
   await ensure()
   const body = await req.json()
   const { title, subtitle, image_url, link, sort_order = 0, active = 1 } = body || {}
-  if (!image_url) return NextResponse.json({ error: "image_url required" }, { status: 400 })
+  const normalized = (() => {
+    const url = String(image_url || '')
+    const m1 = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)\//)
+    if (m1 && m1[1]) return `https://drive.google.com/uc?export=view&id=${m1[1]}`
+    const m2 = url.match(/drive\.(?:google|usercontent)\.com\/.*[?&]id=([^&#]+)/)
+    if (m2 && m2[1]) return `https://drive.google.com/uc?export=view&id=${decodeURIComponent(m2[1])}`
+    return image_url
+  })()
+  if (!normalized) return NextResponse.json({ error: "image_url required" }, { status: 400 })
   const [res]: any = await db.query(
     "INSERT INTO banners (title, subtitle, image_url, link, sort_order, active) VALUES (?, ?, ?, ?, ?, ?)",
-    [title || null, subtitle || null, image_url, link || null, sort_order, active ? 1 : 0]
+    [title || null, subtitle || null, normalized, link || null, sort_order, active ? 1 : 0]
   )
   return NextResponse.json({ success: true, id: res.insertId })
 }
@@ -49,7 +57,17 @@ export async function PUT(req: NextRequest) {
   const values: any[] = []
   if (typeof title !== "undefined") { fields.push("title=?"); values.push(title || null) }
   if (typeof subtitle !== "undefined") { fields.push("subtitle=?"); values.push(subtitle || null) }
-  if (typeof image_url !== "undefined") { fields.push("image_url=?"); values.push(image_url) }
+  if (typeof image_url !== "undefined") {
+    const url = String(image_url || '')
+    const m1 = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)\//)
+    const normalized = m1 && m1[1]
+      ? `https://drive.google.com/uc?export=view&id=${m1[1]}`
+      : (() => {
+          const m2 = url.match(/drive\.(?:google|usercontent)\.com\/.*[?&]id=([^&#]+)/)
+          return (m2 && m2[1]) ? `https://drive.google.com/uc?export=view&id=${decodeURIComponent(m2[1])}` : image_url
+        })()
+    fields.push("image_url=?"); values.push(normalized)
+  }
   if (typeof link !== "undefined") { fields.push("link=?"); values.push(link || null) }
   if (typeof sort_order !== "undefined") { fields.push("sort_order=?"); values.push(Number(sort_order) || 0) }
   if (typeof active !== "undefined") { fields.push("active=?"); values.push(active ? 1 : 0) }

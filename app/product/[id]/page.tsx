@@ -41,7 +41,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
     if (!url) return "/placeholder.svg"
     try {
       const u = new URL(url)
-      if (u.host.includes("drive.google.com")) {
+      if (u.host.includes("drive.google.com") || u.host.includes("drive.usercontent.google.com")) {
         const m = u.pathname.match(/\/file\/d\/([^/]+)/)
         const fid = (m && m[1]) || u.searchParams.get("id") || ""
         if (fid) return "https://lh3.googleusercontent.com/d/" + fid + "=s1600"
@@ -114,4 +114,3 @@ export default function ProductPage({ params }: { params: { id: string } }) {
     </main>
   )
 }
-

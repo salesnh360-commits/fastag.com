@@ -32,12 +32,24 @@ export default function BannersManager() {
     } catch (e) { alert(String(e)) } finally { setSaving(false) }
   }
 
+  // Normalize Google Drive links to direct-view URLs
+  const normalizeDriveUrl = (url?: string) => {
+    if (!url) return url
+    try {
+      const m1 = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)\//)
+      if (m1 && m1[1]) return `https://lh3.googleusercontent.com/d/${m1[1]}=s800`
+      const m2 = url.match(/drive\.(?:google|usercontent)\.com\/.*[?&]id=([^&#]+)/)
+      if (m2 && m2[1]) return `https://lh3.googleusercontent.com/d/${decodeURIComponent(m2[1])}=s800`
+      return url
+    } catch { return url }
+  }
+
   const upload = async (file: File) => {
     const fd = new FormData()
     fd.append("file", file)
     const r = await fetch("/api/banner-upload", { method: "POST", body: fd })
     const j = await r.json()
-    if (j?.url) setForm((f) => ({ ...f, image_url: j.url }))
+    if (j?.url) setForm((f) => ({ ...f, image_url: normalizeDriveUrl(j.url) || j.url }))
   }
 
   const updateField = async (id: number, key: string, value: any) => {
@@ -84,7 +96,7 @@ export default function BannersManager() {
               list.map((b) => (
                 <TableRow key={b.id}>
                   <TableCell className="text-gray-300">{b.id}</TableCell>
-                  <TableCell className="text-gray-300"><img src={b.image_url} alt="banner" className="h-12 w-auto rounded" /></TableCell>
+                  <TableCell className="text-gray-300"><img src={normalizeDriveUrl(b.image_url)} alt="banner" className="h-12 w-auto rounded" /></TableCell>
                   <TableCell className="text-gray-300"><Input defaultValue={b.title || ""} onBlur={(e) => updateField(b.id, "title", e.target.value)} /></TableCell>
                   <TableCell className="text-gray-300"><Input defaultValue={b.sort_order ?? 0} onBlur={(e) => updateField(b.id, "sort_order", Number(e.target.value)||0)} /></TableCell>
                   <TableCell className="text-gray-300">
@@ -106,4 +118,3 @@ export default function BannersManager() {
     </div>
   )
 }
-

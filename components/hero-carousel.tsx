@@ -8,6 +8,22 @@ import Image from "next/image"
 import Link from "next/link"
 import { ProductModal } from "./product-modal"
 
+// Convert Google Drive share links to a direct image URL (lh3.googleusercontent)
+function normalizeImageUrl(url?: string) {
+  if (!url) return url
+  try {
+    // file page
+    const m1 = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)\//)
+    if (m1 && m1[1]) return `https://lh3.googleusercontent.com/d/${m1[1]}=s1600`
+    // open/uc?id=
+    const m2 = url.match(/drive\.(?:google|usercontent)\.com\/(?:open|uc|download)\?[^#]*[?&]id=([^&#]+)/)
+    if (m2 && m2[1]) return `https://lh3.googleusercontent.com/d/${decodeURIComponent(m2[1])}=s1600`
+    return url
+  } catch {
+    return url
+  }
+}
+
 interface HeroSlide {
   id: number
   badge: string
@@ -191,7 +207,7 @@ export function HeroCarousel() {
           reviews: "",
           additionalInfo: "",
           startingPrice: "",
-          image: b.image_url || "/placeholder.jpg",
+          image: normalizeImageUrl(b.image_url) || "/placeholder.jpg",
           imageAlt: b.title || "Banner",
         }))
         if (mapped.length) setDynamicSlides(mapped)
@@ -228,6 +244,47 @@ export function HeroCarousel() {
   return (
     <>
       <section className="bg-gradient-to-br from-orange-50 to-white py-16 lg:py-24 relative overflow-hidden">
+        {/* Decorative RFID-like wave background */}
+        <div className="pointer-events-none absolute inset-0 -z-10">
+          {/* Left-center emanating waves */}
+          <svg
+            className="absolute left-[-10%] top-1/2 -translate-y-1/2 h-[160%] w-[70%] opacity-40 text-orange-200"
+            viewBox="0 0 800 800"
+            aria-hidden="true"
+          >
+            <defs>
+              <linearGradient id="rfid-grad" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stopColor="currentColor" stopOpacity="0.8" />
+                <stop offset="100%" stopColor="currentColor" stopOpacity="0.2" />
+              </linearGradient>
+              <clipPath id="rfid-clip-left">
+                {/* Show only right half to mimic directional waves */}
+                <rect x="0" y="0" width="800" height="800" />
+              </clipPath>
+            </defs>
+            <g clipPath="url(#rfid-clip-left)" stroke="url(#rfid-grad)" fill="none" strokeLinecap="round">
+              <circle cx="0" cy="400" r="120" strokeWidth="1.5" />
+              <circle cx="0" cy="400" r="200" strokeWidth="1.5" />
+              <circle cx="0" cy="400" r="280" strokeWidth="1.5" />
+              <circle cx="0" cy="400" r="360" strokeWidth="1.25" />
+              <circle cx="0" cy="400" r="440" strokeWidth="1.1" />
+              <circle cx="0" cy="400" r="520" strokeWidth="1" />
+            </g>
+          </svg>
+
+          {/* Subtle top-right arcs for balance */}
+          <svg
+            className="absolute right-[-15%] top-[-10%] h-[70%] w-[50%] opacity-25 text-orange-300"
+            viewBox="0 0 800 800"
+            aria-hidden="true"
+          >
+            <g stroke="currentColor" fill="none" strokeLinecap="round">
+              <path d="M700,100 a300,300 0 0 1 -300,300" strokeWidth="1.25" />
+              <path d="M720,120 a340,340 0 0 1 -340,340" strokeWidth="1.1" />
+              <path d="M740,140 a380,380 0 0 1 -380,380" strokeWidth="1" />
+            </g>
+          </svg>
+        </div>
         <div className="container mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-12 items-center min-h-[600px]">
             {/* Text Content */}
@@ -317,6 +374,7 @@ export function HeroCarousel() {
                     sizes="(min-width: 1024px) 800px, 92vw"
                     style={{ objectFit: "cover", objectPosition: "center" }}
                     priority
+                    referrerPolicy="no-referrer"
                   />
                 </div>
 

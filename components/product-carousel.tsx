@@ -109,7 +109,7 @@ export function ProductCarousel({ products, title, subtitle, disableLinks = fals
       // Formats we convert:
       // - https://drive.google.com/file/d/FILE_ID/view?usp=sharing -> uc?export=view&id=FILE_ID
       // - https://drive.google.com/open?id=FILE_ID -> uc?export=view&id=FILE_ID
-      if (host.includes("drive.google.com")) {
+      if (host.includes("drive.google.com") || host.includes("drive.usercontent.google.com")) {
         let id = ""
         const m = path.match(/\/file\/d\/([^/]+)/)
         if (m && m[1]) id = m[1]
