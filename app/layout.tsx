@@ -1,4 +1,5 @@
 import type React from "react"
+import { Suspense } from "react"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
@@ -86,7 +87,9 @@ export default function RootLayout({
           <SiteChrome>{children}</SiteChrome>
         </CartProvider>
         {/* Google Analytics */}
-        <Analytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
+        <Suspense fallback={null}>
+          <Analytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
+        </Suspense>
       </body>
     </html>
   )
