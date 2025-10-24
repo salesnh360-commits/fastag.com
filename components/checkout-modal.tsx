@@ -25,7 +25,7 @@ interface CustomerDetails {
 
 export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
   const { state, dispatch } = useCart()
-  const [step, setStep] = useState<"pincode" | "details" | "success">("pincode")
+  const [step, setStep] = useState<"pincode" | "kyc" | "details" | "success">("pincode")
   const [pincode, setPincode] = useState("")
   const [pincodeValid, setPincodeValid] = useState(false)
   const [pincodeError, setPincodeError] = useState("")
@@ -42,6 +42,8 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [emailStatus, setEmailStatus] = useState<"idle" | "sending" | "sent" | "failed">("idle")
   const [paymentMethod, setPaymentMethod] = useState<"Prepaid" | "COD">("Prepaid")
+  const [docs, setDocs] = useState<Record<string, string>>({})
+  const [uploading, setUploading] = useState<Record<string, boolean>>({})
 
   const totalItems = state.items.reduce((sum, item) => sum + item.quantity, 0)
   const totalPrice = state.items.reduce((sum, item) => sum + item.price * item.quantity, 0)
@@ -84,7 +86,8 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
   const handlePincodeSubmit = () => {
     if (validatePincode(pincode)) {
       setCustomerDetails({ ...customerDetails, pincode })
-      setStep("details")
+      if (!orderId) setOrderId(generateOrderId())
+      setStep("kyc")
     }
   }
 
@@ -111,13 +114,38 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
     return `COR${timestamp}${random}`
   }
 
+  const uploadDoc = async (docType: string, file: File) => {
+    const ensureId = orderId || generateOrderId()
+    if (!orderId) setOrderId(ensureId)
+    setUploading((u) => ({ ...u, [docType]: true }))
+    try {
+      const form = new FormData()
+      form.append("file", file)
+      form.append("orderId", ensureId)
+      form.append("docType", docType)
+      const res = await fetch("/api/order-doc-upload", { method: "POST", body: form })
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        throw new Error(data?.error || "Upload failed")
+      }
+      const data = await res.json()
+      const url = data?.url as string
+      if (url) setDocs((d) => ({ ...d, [docType]: url }))
+    } catch (e) {
+      console.error("doc upload error", e)
+      alert("Failed to upload. Please try again.")
+    } finally {
+      setUploading((u) => ({ ...u, [docType]: false }))
+    }
+  }
+
   const handlePlaceOrder = async () => {
     if (!isDetailsValid()) return
 
     setIsSubmitting(true)
     setEmailStatus("sending")
 
-    const newOrderId = generateOrderId()
+    const newOrderId = orderId || generateOrderId()
     setOrderId(newOrderId)
 
     // Prepare order details for email
@@ -138,6 +166,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
       state: customerDetails.state,
       pincode: customerDetails.pincode,
       orderDate: new Date().toISOString(),
+      docs: Object.entries(docs).map(([doc_type, url]) => ({ doc_type, url })),
     }
 
     // Persist order for Admin dashboard
@@ -214,6 +243,8 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
     setOrderId("")
     setIsSubmitting(false)
     setEmailStatus("idle")
+    setDocs({})
+    setUploading({})
     onClose()
   }
 
@@ -231,6 +262,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
           <div className="flex items-center justify-between p-6 border-b border-gray-200">
             <h2 className="text-2xl font-bold text-gray-900">
               {step === "pincode" && "Check Delivery"}
+              {step === "kyc" && "Upload Documents"}
               {step === "details" && "Checkout Details"}
               {step === "success" && "Order Confirmed"}
             </h2>
@@ -299,6 +331,67 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                   <p className="text-orange-700 text-xs mt-2">
                     Don’t see your area listed? We still deliver — enter your pincode above.
                   </p>
+                </div>
+              </div>
+            )}
+
+            {step === "kyc" && (
+              <div className="space-y-6">
+                <div className="text-center space-y-2">
+                  <h3 className="text-xl font-semibold text-gray-900">Upload KYC Documents</h3>
+                  <p className="text-gray-600 text-sm">RC Front is mandatory to continue. RC Back, Aadhaar, and PAN are optional at this stage.</p>
+                  {orderId && (
+                    <p className="text-xs text-gray-400">Temporary Order ID: {orderId}</p>
+                  )}
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-4">
+                  {[
+                    { key: 'rc_front', label: 'RC Front (Required)' },
+                    { key: 'rc_back', label: 'RC Back (Optional)' },
+                    { key: 'aadhar_front', label: 'Aadhaar Front (Optional)' },
+                    { key: 'aadhar_back', label: 'Aadhaar Back (Optional)' },
+                    { key: 'pan', label: 'PAN (Optional)' },
+                  ].map(({ key, label }) => (
+                    <div key={key} className="space-y-2 border border-gray-200 rounded-lg p-3">
+                      <div className="flex items-center justify-between text-sm">
+                        <label className="font-medium text-gray-800">{label}</label>
+                        {docs[key] ? (
+                          <span className="text-green-600">Uploaded</span>
+                        ) : uploading[key] ? (
+                          <span className="text-orange-600">Uploading…</span>
+                        ) : (
+                          <span className="text-gray-400">Not uploaded</span>
+                        )}
+                      </div>
+                      <input
+                        type="file"
+                        accept="image/*,application/pdf"
+                        onChange={(e) => {
+                          const f = e.target.files?.[0]
+                          if (f) uploadDoc(key, f)
+                        }}
+                      />
+                      {/* URL hidden intentionally */}
+                    </div>
+                  ))}
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <Button
+                    variant="outline"
+                    className="border-gray-300 text-gray-700"
+                    onClick={() => setStep('pincode')}
+                  >
+                    Back
+                  </Button>
+                  <Button
+                    className="bg-orange-600 hover:bg-orange-700 text-white"
+                    disabled={!docs['rc_front']}
+                    onClick={() => setStep('details')}
+                  >
+                    Continue to Checkout
+                  </Button>
                 </div>
               </div>
             )}

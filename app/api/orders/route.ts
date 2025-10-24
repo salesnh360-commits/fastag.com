@@ -159,6 +159,7 @@ export async function POST(req: NextRequest) {
       pincode,
       totalAmount,
       items = [],
+      docs = [],
     } = body || {}
 
     await db.query(`
@@ -189,6 +190,16 @@ export async function POST(req: NextRequest) {
         FOREIGN KEY (orderId) REFERENCES orders(id) ON DELETE CASCADE
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
     `)
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS order_documents (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        orderId INT NOT NULL,
+        doc_type VARCHAR(64) NOT NULL,
+        url VARCHAR(1024) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (orderId) REFERENCES orders(id) ON DELETE CASCADE
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    `)
     try { await db.query("ALTER TABLE orders ADD COLUMN shipping_shipment_id VARCHAR(64) NULL") } catch {}
     try { await db.query("ALTER TABLE orders ADD COLUMN shipping_awb VARCHAR(64) NULL") } catch {}
     try { await db.query("ALTER TABLE orders ADD COLUMN shipping_label_url VARCHAR(1024) NULL") } catch {}
@@ -211,6 +222,23 @@ export async function POST(req: NextRequest) {
           `INSERT INTO order_items (orderId, name, quantity, price) VALUES (?, ?, ?, ?)`,
           [id, name || '', Number(quantity) || 1, Number(price) || 0]
         )
+      }
+    }
+
+    // Save any uploaded document URLs mapped to this order
+    if (Array.isArray(docs)) {
+      for (const d of docs) {
+        const doc_type = (d?.doc_type || d?.type || '').toString().toLowerCase()
+        const url = (d?.url || '').toString()
+        if (!doc_type || !url) continue
+        try {
+          await db.query(
+            `INSERT INTO order_documents (orderId, doc_type, url) VALUES (?, ?, ?)`,
+            [id, doc_type, url]
+          )
+        } catch (e) {
+          console.warn('order create: document save failed', e)
+        }
       }
     }
 
