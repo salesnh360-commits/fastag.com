@@ -1,5 +1,7 @@
 "use client"
 
+import { useEffect } from "react"
+import { usePathname, useSearchParams } from "next/navigation"
 import Script from "next/script"
 
 type Props = {
@@ -7,6 +9,19 @@ type Props = {
 }
 
 export default function Analytics({ gaId }: Props) {
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+
+  useEffect(() => {
+    if (!gaId) return
+    if (typeof window === "undefined" || !(window as any).gtag) return
+
+    const pagePath = `${pathname || "/"}${searchParams?.toString() ? `?${searchParams}` : ""}`
+    ;(window as any).gtag("config", gaId, {
+      page_path: pagePath,
+    })
+  }, [gaId, pathname, searchParams])
+
   if (!gaId) return null
   return (
     <>
@@ -25,4 +40,3 @@ export default function Analytics({ gaId }: Props) {
     </>
   )
 }
-
