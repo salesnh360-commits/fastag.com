@@ -112,8 +112,8 @@ export default function SaasFooter() {
             <ul className="space-y-2 text-sm text-gray-600">
               <li><Link href="/#buy" className="hover:text-orange-700">Buy FASTag</Link></li>
               <li><Link href="/#recharge" className="hover:text-orange-700">Recharge Assistance</Link></li>
-              <li><Link href="/#services" className="hover:text-orange-700">KYC Update</Link></li>
-              <li><Link href="/#services" className="hover:text-orange-700">Blacklist Removal</Link></li>
+              <li><Link href="/support/kyc-update" className="hover:text-orange-700">KYC Update</Link></li>
+              <li><Link href="/support/blacklist-removal" className="hover:text-orange-700">Blacklist Removal</Link></li>
             </ul>
           </div>
 

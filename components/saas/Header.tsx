@@ -17,7 +17,16 @@ export default function SaasHeader() {
     { href: "/", label: "Home" },
     { href: "/#buy", label: "Buy FASTag" },
     { href: "/#recharge", label: "Recharge FASTag" },
-    { href: "/#services", label: "Get Support" },
+    {
+      href: "/support",
+      label: "Get Support",
+      children: [
+        { href: "/support/kyc-update", label: "KYC Update" },
+        { href: "/support/blacklist-removal", label: "Blacklist Removal" },
+        { href: "/support/tag-replacement", label: "Tag Replacement" },
+        { href: "/support/dispute", label: "Dispute Help" },
+      ],
+    },
     { href: "/products", label: "Products" },
     { href: "/#blog", label: "Blog" },
     { href: "/contact", label: "Contact Us" },

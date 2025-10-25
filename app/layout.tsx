@@ -81,7 +81,7 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-        <link rel="stylesheet" href="/saasland/index.css" />
+        {/* Removed external CSS that was overriding theme variables and forcing dark inputs */}
         {/* theme-color is managed via exported viewport */}
         {process.env.NEXT_PUBLIC_SITE_URL ? (
           <link rel="canonical" href={process.env.NEXT_PUBLIC_SITE_URL} />

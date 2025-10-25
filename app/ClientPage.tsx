@@ -408,8 +408,8 @@ export default function ClientPage() {
               <div className="space-y-2 text-gray-400">
                 <Link href="#buy" className="block hover:text-orange-500 transition-colors">Buy FASTag</Link>
                 <Link href="#recharge" className="block hover:text-orange-500 transition-colors">Recharge</Link>
-                <Link href="#services" className="block hover:text-orange-500 transition-colors">KYC Update</Link>
-                <Link href="#services" className="block hover:text-orange-500 transition-colors">Blacklist Removal</Link>
+                <Link href="/support/kyc-update" className="block hover:text-orange-500 transition-colors">KYC Update</Link>
+                <Link href="/support/blacklist-removal" className="block hover:text-orange-500 transition-colors">Blacklist Removal</Link>
                 <Link href="#services" className="block hover:text-orange-500 transition-colors">Fleet Solutions</Link>
               </div>
             </div>

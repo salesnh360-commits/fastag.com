@@ -161,10 +161,10 @@ export default function HomePage() {
           <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900 mb-8">Services</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { t: "KYC Update", d: "Update KYC or change vehicle/owner details", href: "/buy" },
-              { t: "Blacklist Removal", d: "Resolve blacklist due to KYC or low balance", href: "/recharge" },
-              { t: "Tag Replacement", d: "Replace damaged or lost FASTag", href: "/buy" },
-              { t: "Dispute Help", d: "Toll double-charge or debit disputes", href: "/recharge" },
+              { t: "KYC Update", d: "Update KYC or change vehicle/owner details", href: "/support/kyc-update" },
+              { t: "Blacklist Removal", d: "Resolve blacklist due to KYC or low balance", href: "/support/blacklist-removal" },
+              { t: "Tag Replacement", d: "Replace damaged or lost FASTag", href: "/support/tag-replacement" },
+              { t: "Dispute Help", d: "Toll double-charge or debit disputes", href: "/support/dispute" },
             ].map((c) => (
               <Card key={c.t} className="border-orange-200 bg-white">
                 <CardContent className="p-6 space-y-3">
