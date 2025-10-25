@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 
 type OrderItem = { name: string; quantity: number; price: number };
@@ -15,6 +15,7 @@ type OrderEmailData = {
   state: string;
   pincode: string;
   orderDate: string;
+  paymentMethod?: string;
 };
 
 type StatusUpdateData = {
@@ -73,7 +74,7 @@ export async function POST(req: NextRequest) {
         <p><b>Payment:</b> ${orderData.paymentMethod === 'COD' ? 'Cash on Delivery (COD)' : 'Paid (Prepaid)'}</p>
         <p><b>Address:</b> ${orderData.address}, ${orderData.city}, ${orderData.state}, ${orderData.pincode}</p>
         <p><b>Date:</b> ${orderData.orderDate}</p>
-        <p><b>Total:</b> ₹${orderData.totalAmount}</p>
+        <p><b>Total: ₹${orderData.totalAmount}</b> ₹${orderData.totalAmount}</p>
         <ul>
           ${orderData.items.map(item => `<li>${item.name} x ${item.quantity} @ ₹${item.price}</li>`).join("")}
         </ul>

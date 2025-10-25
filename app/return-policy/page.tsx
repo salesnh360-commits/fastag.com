@@ -1,512 +1,146 @@
 import type { Metadata } from "next"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import {
-  Package,
-  Clock,
-  Shield,
-  Truck,
-  CreditCard,
-  AlertCircle,
-  CheckCircle,
-  XCircle,
-  Phone,
-  Mail,
-  MapPin,
-  Calendar,
-  FileText,
-  RefreshCw,
-  HelpCircle,
-} from "lucide-react"
 import Link from "next/link"
+import { Card, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { CreditCard, HelpCircle, Phone, Mail, MapPin, Calendar, Shield } from "lucide-react"
 
 export const metadata: Metadata = {
-  title: "Refund Policy - NH360 FASTag | Service Refunds & Dispute Support",
+  title: "Refund Policy - NH360 FASTag Solutions",
   description:
-    "Read NH360 FASTag refund and support policy for services like recharge assistance, KYC updates, blacklist removal, and tag replacement.",
+    "Refund policy for NH360 FASTag Solutions services such as issuance facilitation, recharge assistance, KYC updates, blacklist removal guidance, and fleet solutions.",
   openGraph: {
-    title: "Refund Policy - NH360 FASTag",
-    description: "Refunds and dispute assistance for FASTag-related services.",
+    title: "Refund Policy - NH360 FASTag Solutions",
+    description: "Understand how refunds work for our FASTag-related services.",
     images: ["/placeholder.jpg"],
   },
 }
 
-export default function ReturnPolicyPage() {
+export default function RefundPolicyPage() {
   const lastUpdated = "January 15, 2025"
-  const contactInfo = {
-    phone: "8667460935 / 8667460635",
-    email: "support@nh360fastag.com",
-    address: "54RC+F3, Kakapalayam, Paduvampalli, Tamil Nadu 641659",
+  const contact = {
+    phones: ["+91-8667460935", "+91-8667460635"],
+    emails: ["info@nh360fastag.com", "support@nh360fastagsolutions.com"],
+    corporateAddress:
+      "6th Floor, Block C, Hanudev Infopark, Sf.No.558/2, Udayampalayam Main Rd, KR Puram, NavaIndia, Coimbatore, Tamil Nadu 641028",
   }
 
-  const trialPeriod = {
-    duration: "100 Nights",
-    description: "Sleep on your mattress for 100 nights to ensure it's the perfect fit for you",
-    features: [
-      "Full 100-night trial period",
-      "No questions asked returns",
-      "Free pickup and return",
-      "Full refund guarantee",
-      "No restocking fees",
-    ],
-  }
-
-  const returnProcess = [
+  const sections = [
     {
-      step: 1,
-      title: "Contact Customer Service",
-      description: "Call or email us within 100 days of delivery",
-      icon: <Phone className="h-6 w-6" />,
-      details: "Reach out to our customer service team to initiate your return",
+      title: "Scope",
+      body:
+        "This policy applies to our facilitation and support services including FASTag issuance assistance, recharge assistance, KYC updates, blacklist removal guidance, dispute support, and fleet solutions. We do not sell mattresses, pillows or similar products.",
     },
     {
-      step: 2,
-      title: "Schedule Pickup",
-      description: "We'll arrange free pickup within 3-5 business days",
-      icon: <Truck className="h-6 w-6" />,
-      details: "Our team will contact you to schedule a convenient pickup time",
+      title: "Service Fees",
+      body:
+        "Service fees are charged for our time, expertise and coordination efforts. Bank/issuer charges and wallet balances are separate and governed by the respective institution’s policies.",
     },
     {
-      step: 3,
-      title: "Product Inspection",
-      description: "We'll inspect the product upon pickup",
-      icon: <Package className="h-6 w-6" />,
-      details: "Standard inspection to ensure product condition meets return criteria",
+      title: "FASTag Issuance Assistance",
+      body:
+        "If a FASTag cannot be issued/activated after you have provided correct and complete KYC documents, and the failure is not due to bank/issuer restrictions or regulatory reasons, we will refund our service fee. When rejection is due to incomplete/incorrect documentation, regulatory constraints, or issuer policy, service fees may not be refundable.",
     },
     {
-      step: 4,
-      title: "Refund Processing",
-      description: "Receive your refund within 7-10 business days",
-      icon: <CreditCard className="h-6 w-6" />,
-      details: "Refund will be processed to your original payment method",
-    },
-  ]
-
-  const warrantyInfo = {
-    duration: "15 Years",
-    coverage: [
-      "Manufacturing defects",
-      "Sagging beyond normal wear",
-      "Structural integrity issues",
-      "Material quality problems",
-      "Edge support failures",
-    ],
-    exclusions: [
-      "Normal wear and tear",
-      "Damage from improper use",
-      "Stains or spills",
-      "Damage from pets",
-      "Unauthorized modifications",
-    ],
-  }
-
-  const returnConditions = {
-    eligible: [
-      "Products in original condition",
-      "Original packaging included",
-      "No stains or damage",
-      "Within 100 days of delivery",
-      "All accessories included",
-    ],
-    notEligible: [
-      "Products with stains or damage",
-      "Missing original packaging",
-      "Used beyond normal wear",
-      "After 100-day trial period",
-      "Custom or special order items",
-    ],
-  }
-
-  const refundTimeline = [
-    {
-      stage: "Return Request",
-      timeline: "Same day",
-      description: "Contact customer service to initiate return",
+      title: "Recharge Assistance",
+      body:
+        "When we assist with a recharge and the payment is captured but the tag is not credited due to issuer/PG issues, we will work with the issuer/payment gateway for resolution. If unresolved within a reasonable time window (typically 5–7 business days) and the funds are not reflected or reversed, we will refund our service fee. Issuer/PG refunds follow their respective policies.",
     },
     {
-      stage: "Pickup Scheduled",
-      timeline: "3-5 business days",
-      description: "Our team arranges pickup from your location",
+      title: "KYC Update & Blacklist Removal",
+      body:
+        "For KYC updates and blacklist removal guidance, fees are refundable only if we cannot initiate the process with the issuer due to reasons attributable to us. If delays or rejections arise from issuer policy, regulatory checks, or incorrect documents, service fees may not be refundable.",
     },
     {
-      stage: "Product Inspection",
-      timeline: "1-2 business days",
-      description: "Quality check and condition assessment",
+      title: "Disputes & Double‑Debits",
+      body:
+        "We submit/guide dispute requests with issuers/NPCI for toll double‑charge or debit errors. Outcomes are subject to issuer/NPCI review. Our service fee is refundable only where we fail to submit/initiate the dispute due to our error.",
     },
     {
-      stage: "Refund Processing",
-      timeline: "7-10 business days",
-      description: "Refund credited to original payment method",
-    },
-  ]
-
-  const faq = [
-    {
-      question: "What is the 100-night trial period?",
-      answer: "You have 100 nights to sleep on your mattress and decide if it's right for you. If you're not satisfied, you can return it for a full refund, no questions asked.",
+      title: "Processing Time",
+      body:
+        "Approved refunds of our service fees are typically processed within 5–7 business days to the original payment method.",
     },
     {
-      question: "Is there a return fee?",
-      answer: "No return fees for trial returns within the 100-night period. We cover all pickup and return shipping costs.",
-    },
-    {
-      question: "What if the mattress doesn't feel right?",
-      answer: "We understand that finding the perfect mattress takes time. Our 100-night trial gives you plenty of time to adjust and decide if it's the right fit for you.",
-    },
-    {
-      question: "How do I initiate a return?",
-      answer: "Call 8667460935 / 8667460635 or email support@nh360fastag.com within 100 days of delivery. Our customer service team will guide you through the process.",
-    },
-    {
-      question: "What happens to the returned mattress?",
-      answer: "Returned mattresses are donated to local charities or recycled responsibly, ensuring they don't go to waste while helping those in need.",
-    },
-    {
-      question: "Can I return accessories and bedding?",
-      answer: "Yes, pillows, toppers, protectors, and bedding can be returned within 30 days of purchase if unused and in original packaging.",
+      title: "How to Request a Refund",
+      body:
+        "Email or call us with your order/reference number, date, service taken, and a brief description. We may request supporting documents (e.g., payment proof, screenshots).",
     },
   ]
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Header */}
-      <header className="border-b border-gray-100 bg-white sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center space-x-2">
-            <div className="text-2xl font-bold text-orange-600">NH360 FASTag</div>
-          </Link>
-          <nav className="hidden md:flex items-center space-x-8">
-            <Link href="/#buy" className="text-gray-700 hover:text-orange-600 transition-colors">Buy FASTag</Link>
-            <Link href="/#recharge" className="text-gray-700 hover:text-orange-600 transition-colors">Recharge</Link>
-            <Link href="/#services" className="text-gray-700 hover:text-orange-600 transition-colors">Services</Link>
-            <Link href="/contact" className="text-gray-700 hover:text-orange-600 transition-colors">Contact</Link>
-          </nav>
-          <Button asChild className="bg-orange-600 hover:bg-orange-700 text-white"><Link href="/#buy">Buy FASTag</Link></Button>
-        </div>
-      </header>
-
-      {/* Hero Section */}
+    <main className="min-h-screen bg-white">
+      {/* Hero */}
       <section className="bg-gradient-to-br from-orange-50 to-white py-16">
-        <div className="container mx-auto px-4">
-          <div className="text-center space-y-4">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-orange-100 text-orange-600 rounded-full mb-4">
-              <Package className="h-8 w-8" />
-            </div>
-            <h1 className="text-4xl lg:text-5xl font-bold text-gray-900">Return Policy</h1>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Sleep with confidence knowing you have 100 nights to find your perfect mattress
-            </p>
-            <div className="flex items-center justify-center space-x-4 text-sm text-gray-500">
-              <Calendar className="h-4 w-4" />
-              <span>Last updated: {lastUpdated}</span>
-            </div>
+        <div className="container mx-auto px-4 text-center space-y-4">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-orange-100 text-orange-600 rounded-full mx-auto">
+            <CreditCard className="h-8 w-8" />
+          </div>
+          <h1 className="text-4xl lg:text-5xl font-bold text-gray-900">Refund Policy</h1>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            Clear, fair and service‑oriented refunds for FASTag facilitation and support.
+          </p>
+          <div className="flex items-center justify-center gap-2 text-sm text-gray-500">
+            <Calendar className="h-4 w-4" />
+            <span>Last updated: {lastUpdated}</span>
           </div>
         </div>
       </section>
 
-      {/* 100-Night Trial */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <Card className="border-0 shadow-xl bg-gradient-to-r from-orange-600 to-orange-700 text-white">
-            <CardContent className="p-8">
-              <div className="grid md:grid-cols-2 gap-8 items-center">
-                <div className="space-y-6">
-                  <div className="flex items-center space-x-3">
-                    <div className="text-4xl font-bold">{trialPeriod.duration}</div>
-                    <div className="text-xl font-semibold">Trial Period</div>
-                  </div>
-                  <p className="text-orange-100 text-lg">{trialPeriod.description}</p>
-                  <div className="space-y-3">
-                    {trialPeriod.features.map((feature, index) => (
-                      <div key={index} className="flex items-center space-x-3">
-                        <CheckCircle className="h-5 w-5 text-orange-200" />
-                        <span className="text-orange-100">{feature}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div className="text-center">
-                  <div className="inline-flex items-center justify-center w-24 h-24 bg-white/20 rounded-full mb-4">
-                    <Clock className="h-12 w-12 text-white" />
-                  </div>
-                  <p className="text-orange-200 text-sm">
-                    Take your time to ensure the perfect sleep experience
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+      {/* Policy Sections */}
+      <section className="py-12">
+        <div className="container mx-auto px-4 max-w-5xl space-y-6">
+          {sections.map((s, i) => (
+            <Card key={i} className="border border-orange-200 bg-white text-gray-900 shadow-sm">
+              <CardContent className="p-6 space-y-2">
+                <h2 className="text-xl font-semibold text-gray-900">{s.title}</h2>
+                <p className="text-gray-700 leading-relaxed">{s.body}</p>
+              </CardContent>
+            </Card>
+          ))}
         </div>
       </section>
 
-      {/* Return Process */}
+      {/* Contact for Refunds */}
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
-          <div className="text-center space-y-4 mb-12">
-            <h2 className="text-3xl font-bold text-gray-900">How Returns Work</h2>
-            <p className="text-xl text-gray-600">Simple 4-step process for hassle-free returns</p>
-          </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {returnProcess.map((step, index) => (
-              <Card key={index} className="border-0 shadow-lg">
-                <CardContent className="p-6 text-center space-y-4">
-                  <div className="inline-flex items-center justify-center w-12 h-12 bg-orange-100 text-orange-600 rounded-full">
-                    {step.icon}
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-center space-x-2">
-                      <Badge className="bg-orange-600 text-white">Step {step.step}</Badge>
-                    </div>
-                    <h3 className="text-lg font-semibold text-gray-900">{step.title}</h3>
-                    <p className="text-gray-600 text-sm">{step.description}</p>
-                    <p className="text-gray-500 text-xs">{step.details}</p>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Warranty Information */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <div className="grid lg:grid-cols-2 gap-12">
-            <div className="space-y-8">
-              <div className="space-y-4">
-                <h2 className="text-3xl font-bold text-gray-900">15-Year Warranty</h2>
-                <p className="text-lg text-gray-600">
-                  Our comprehensive warranty covers manufacturing defects and ensures your investment is protected.
-                </p>
-              </div>
-              <div className="space-y-4">
-                <h3 className="text-xl font-semibold text-gray-900">What's Covered</h3>
-                <div className="space-y-2">
-                  {warrantyInfo.coverage.map((item, index) => (
-                    <div key={index} className="flex items-center space-x-3">
-                      <CheckCircle className="h-5 w-5 text-green-600" />
-                      <span className="text-gray-700">{item}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center space-y-4 mb-8">
+              <h2 className="text-2xl font-bold text-gray-900">Need Help With a Refund?</h2>
+              <p className="text-gray-600">Reach out with your reference number. We’re happy to assist.</p>
             </div>
-            <div className="space-y-8">
-              <div className="space-y-4">
-                <h3 className="text-xl font-semibold text-gray-900">What's Not Covered</h3>
-                <div className="space-y-2">
-                  {warrantyInfo.exclusions.map((item, index) => (
-                    <div key={index} className="flex items-center space-x-3">
-                      <XCircle className="h-5 w-5 text-red-600" />
-                      <span className="text-gray-700">{item}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <Card className="border-0 shadow-lg bg-orange-50">
-                <CardContent className="p-6">
-                  <div className="flex items-center space-x-3 mb-4">
-                    <Shield className="h-8 w-8 text-orange-600" />
-                    <h4 className="text-lg font-semibold text-gray-900">Warranty Claims</h4>
-                  </div>
-                  <p className="text-gray-600 text-sm">
-                    For warranty claims, contact our customer service team. We'll assess the issue and provide
-                    appropriate solutions including repair, replacement, or refund.
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Return Conditions */}
-      <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="space-y-6">
-              <h2 className="text-3xl font-bold text-gray-900">Return Conditions</h2>
-              <div className="space-y-4">
-                <h3 className="text-xl font-semibold text-gray-900">Eligible for Return</h3>
-                <div className="space-y-2">
-                  {returnConditions.eligible.map((condition, index) => (
-                    <div key={index} className="flex items-center space-x-3">
-                      <CheckCircle className="h-5 w-5 text-green-600" />
-                      <span className="text-gray-700">{condition}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-            <div className="space-y-6">
-              <h3 className="text-xl font-semibold text-gray-900">Not Eligible for Return</h3>
-              <div className="space-y-2">
-                {returnConditions.notEligible.map((condition, index) => (
-                  <div key={index} className="flex items-center space-x-3">
-                    <XCircle className="h-5 w-5 text-red-600" />
-                    <span className="text-gray-700">{condition}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Refund Timeline */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <div className="text-center space-y-4 mb-12">
-            <h2 className="text-3xl font-bold text-gray-900">Refund Timeline</h2>
-            <p className="text-xl text-gray-600">What to expect during the return process</p>
-          </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {refundTimeline.map((stage, index) => (
-              <Card key={index} className="border-0 shadow-lg">
-                <CardContent className="p-6 text-center space-y-4">
-                  <div className="inline-flex items-center justify-center w-12 h-12 bg-orange-100 text-orange-600 rounded-full">
-                    <Clock className="h-6 w-6" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-gray-900">{stage.stage}</h3>
-                  <div className="text-2xl font-bold text-orange-600">{stage.timeline}</div>
-                  <p className="text-gray-600 text-sm">{stage.description}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ Section */}
-      <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <div className="text-center space-y-4 mb-12">
-            <h2 className="text-3xl font-bold text-gray-900">Frequently Asked Questions</h2>
-            <p className="text-xl text-gray-600">Common questions about returns and warranty</p>
-          </div>
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {faq.map((item, index) => (
-              <Card key={index} className="border-0 shadow-lg">
-                <CardContent className="p-6 space-y-4">
-                  <h3 className="text-lg font-semibold text-gray-900">{item.question}</h3>
-                  <p className="text-gray-600">{item.answer}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Contact Support */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center space-y-8">
-            <h2 className="text-3xl font-bold text-gray-900">Need Help with Returns?</h2>
-            <p className="text-lg text-gray-600">
-              Our customer service team is here to help with any questions about returns, warranty, or refunds.
-            </p>
             <div className="grid md:grid-cols-3 gap-6">
-              <div className="space-y-4">
-                <div className="inline-flex items-center justify-center w-12 h-12 bg-orange-100 text-orange-600 rounded-full">
-                  <Phone className="h-6 w-6" />
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900">Call Us</h3>
-                <p className="text-gray-600">{contactInfo.phone}</p>
-                <p className="text-sm text-gray-500">Mon-Sat, 9 AM - 7 PM</p>
-              </div>
-              <div className="space-y-4">
-                <div className="inline-flex items-center justify-center w-12 h-12 bg-orange-100 text-orange-600 rounded-full">
-                  <Mail className="h-6 w-6" />
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900">Email Us</h3>
-                <p className="text-gray-600">{contactInfo.email}</p>
-                <p className="text-sm text-gray-500">Response within 24 hours</p>
-              </div>
-              <div className="space-y-4">
-                <div className="inline-flex items-center justify-center w-12 h-12 bg-orange-100 text-orange-600 rounded-full">
-                  <MapPin className="h-6 w-6" />
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900">Visit Us</h3>
-                <p className="text-gray-600">{contactInfo.address}</p>
-                <p className="text-sm text-gray-500">Showroom available</p>
-              </div>
+              <Card className="border border-orange-200 bg-white text-gray-900 shadow-sm text-center">
+                <CardContent className="p-6 space-y-2">
+                  <Phone className="h-6 w-6 text-orange-600 mx-auto" />
+                  <div className="font-semibold">Call Us</div>
+                  <div className="text-gray-700">{contact.phones.join(" / ")}</div>
+                </CardContent>
+              </Card>
+              <Card className="border border-orange-200 bg-white text-gray-900 shadow-sm text-center">
+                <CardContent className="p-6 space-y-2">
+                  <Mail className="h-6 w-6 text-orange-600 mx-auto" />
+                  <div className="font-semibold">Email Us</div>
+                  <div className="text-gray-700">{contact.emails.join(" | ")}</div>
+                </CardContent>
+              </Card>
+              <Card className="border border-orange-200 bg-white text-gray-900 shadow-sm text-center">
+                <CardContent className="p-6 space-y-2">
+                  <MapPin className="h-6 w-6 text-orange-600 mx-auto" />
+                  <div className="font-semibold">Corporate Office</div>
+                  <div className="text-gray-700">{contact.corporateAddress}</div>
+                </CardContent>
+              </Card>
             </div>
-            <div className="pt-8">
+            <div className="pt-8 text-center">
               <Link href="/contact">
-                <Button className="bg-orange-600 hover:bg-orange-700 text-white h-12 px-8">
-                  Contact Customer Service
-                </Button>
+                <Button className="bg-orange-600 hover:bg-orange-700 text-white">Contact Support</Button>
               </Link>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div className="space-y-4">
-              <div className="flex items-center space-x-2">
-                <div className="text-2xl font-bold text-orange-500">NH360 FASTag</div>
-              </div>
-              <p className="text-gray-400">FASTag Sales & Services Across India</p>
-              <p className="text-gray-400">Buy FASTag, recharge, and get 24×7 support for all issuers.</p>
-            </div>
-            <div className="space-y-4">
-              <h4 className="text-lg font-semibold">Services</h4>
-              <div className="space-y-2 text-gray-400">
-                <Link href="/#buy" className="block hover:text-orange-500 transition-colors">Buy FASTag</Link>
-                <Link href="/#recharge" className="block hover:text-orange-500 transition-colors">Recharge</Link>
-                <Link href="/#services" className="block hover:text-orange-500 transition-colors">KYC Update</Link>
-                <Link href="/#services" className="block hover:text-orange-500 transition-colors">Blacklist Removal</Link>
-                <Link href="/#services" className="block hover:text-orange-500 transition-colors">Fleet Solutions</Link>
-              </div>
-            </div>
-            <div className="space-y-4">
-              <h4 className="text-lg font-semibold">Support</h4>
-              <div className="space-y-2 text-gray-400">
-                <Link href="/about" className="block hover:text-orange-500 transition-colors">
-                  About Us
-                </Link>
-                <Link href="/faq" className="block hover:text-orange-500 transition-colors">
-                  FAQ
-                </Link>
-                <Link href="/contact" className="block hover:text-orange-500 transition-colors">
-                  Contact
-                </Link>
-                <Link href="/privacy-policy" className="block hover:text-orange-500 transition-colors">
-                  Privacy Policy
-                </Link>
-                <Link href="/return-policy" className="block hover:text-orange-500 transition-colors">
-                  Return Policy
-                </Link>
-              </div>
-            </div>
-            <div className="space-y-4">
-              <h4 className="text-lg font-semibold">Connect</h4>
-              <div className="space-y-2 text-gray-400">
-                <Link href="#" className="block hover:text-orange-500 transition-colors">
-                  Facebook
-                </Link>
-                <Link href="#" className="block hover:text-orange-500 transition-colors">
-                  Instagram
-                </Link>
-                <Link href="#" className="block hover:text-orange-500 transition-colors">
-                  Twitter
-                </Link>
-                <Link href="#" className="block hover:text-orange-500 transition-colors">
-                  YouTube
-                </Link>
-              </div>
-            </div>
-          </div>
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2025 NH360 FASTag. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
-    </div>
+    </main>
   )
-} 
+}

@@ -1,4 +1,4 @@
-import Link from "next/link"
+﻿import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { headers } from "next/headers"
 import AdminBlogsList from "@/components/admin/blogs-list"
@@ -17,7 +17,7 @@ async function fetchPosts(baseUrl: string) {
 }
 
 export default async function AdminBlogsPage() {
-  const h = headers()
+  const h = await headers()
   const proto = h.get("x-forwarded-proto") ?? "http"
   const host = h.get("host") ?? "localhost:3000"
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || `${proto}://${host}`

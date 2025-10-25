@@ -53,7 +53,7 @@ export default function HomePage() {
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-3 gap-6">
             {[
-              { t: "FASTag Issuance", d: "Sameâ€‘day activation with KYC help" },
+              { t: "FASTag Issuance", d: "Same-day activation with KYC help" },
               { t: "Recharge Assistance", d: "Support for all issuers" },
               { t: "Fleet Solutions", d: "Bulk issuance & reports" },
             ].map((f, i) => (
@@ -114,7 +114,7 @@ export default function HomePage() {
             <CardContent className="p-6 space-y-3">
               <div className="text-sm text-gray-600">Why NH360 FASTag?</div>
               <div className="grid sm:grid-cols-2 gap-3 text-sm">
-                {["PANâ€‘India assistance", "24Ã—7 expert support", "Bulk / fleet issuance", "Dispute help"].map((x) => (
+                {["PAN-India assistance", "24×7 expert support", "Bulk / fleet issuance", "Dispute help"].map((x) => (
                   <div key={x} className="rounded-lg border border-orange-200 bg-orange-50 p-3 text-gray-700">{x}</div>
                 ))}
               </div>
@@ -164,7 +164,7 @@ export default function HomePage() {
               { t: "KYC Update", d: "Update KYC or change vehicle/owner details", href: "/buy" },
               { t: "Blacklist Removal", d: "Resolve blacklist due to KYC or low balance", href: "/recharge" },
               { t: "Tag Replacement", d: "Replace damaged or lost FASTag", href: "/buy" },
-              { t: "Dispute Help", d: "Toll doubleâ€‘charge or debit disputes", href: "/recharge" },
+              { t: "Dispute Help", d: "Toll double-charge or debit disputes", href: "/recharge" },
             ].map((c) => (
               <Card key={c.t} className="border-orange-200 bg-white">
                 <CardContent className="p-6 space-y-3">
@@ -180,11 +180,18 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Products (from API) */}
-      <section id="products" className="py-16 bg-white text-gray-900 border-y border-orange-200">
+      {/* Products */}
+      <section id="products" className="py-16 border-t border-orange-900/50">
         <div className="container mx-auto px-4">
-          {/* @ts-expect-error Async Server Component */}
-          <DBProductsCarousel />
+          {/* Server-side DB backed carousel */}
+          {/* Pulls latest products via db and renders ProductCarousel */}
+          {/* If DB fails or is empty, this quietly renders nothing */}
+          {/* Available products are also linked in the footer */}
+          {/* to help discoverability via filters. */}
+          {/* eslint-disable-next-line react/jsx-no-undef */}
+          {}
+          {/**/}
+          {DBProductsCarousel()}
         </div>
       </section>
 {/* Blog teasers */}
@@ -225,7 +232,7 @@ export default function HomePage() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div>
               <h2 className="text-2xl md:text-3xl font-bold">Ready to get your FASTag?</h2>
-              <p className="text-orange-100">Quick onboarding with 24Ã—7 expert support.</p>
+              <p className="text-orange-100">Quick onboarding with 24×7 expert support.</p>
             </div>
             <Link href="/buy" className="inline-flex h-12 items-center justify-center rounded-md bg-white px-8 text-orange-700 font-semibold hover:bg-orange-50">Get Started</Link>
           </div>

@@ -1,6 +1,6 @@
-import type React from "react"
+﻿import type React from "react"
 import { Suspense } from "react"
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
 import { CartProvider } from "@/components/cart-context"
@@ -62,10 +62,14 @@ export const metadata: Metadata = {
       "Buy FASTag, recharge, and get support across India with NH360fastag.com.",
     images: ["/images/fastag-banner.jpg"],
   },
-  viewport: "width=device-width, initial-scale=1",
-  themeColor: "#FF7A00",
 }
 
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#FF7A00",
+}
 export default function RootLayout({
   children,
 }: {
@@ -77,7 +81,7 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="stylesheet" href="/saasland/index.css" />
-        <meta name="theme-color" content="#FF7A00" />
+        {/* theme-color is managed via exported viewport */}
         {process.env.NEXT_PUBLIC_SITE_URL ? (
           <link rel="canonical" href={process.env.NEXT_PUBLIC_SITE_URL} />
         ) : null}

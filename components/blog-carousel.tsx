@@ -53,7 +53,7 @@ export default function BlogCarousel() {
     return (
       <div className="grid md:grid-cols-3 gap-6">
         {[0, 1, 2].map((i) => (
-          <div key={i} className="rounded-xl border border-orange-900 bg-neutral-900 p-6 animate-pulse h-[180px]" />
+          <div key={i} className="rounded-xl border border-orange-200 bg-white p-6 animate-pulse h-[180px]" />
         ))}
       </div>
     )
@@ -74,16 +74,16 @@ export default function BlogCarousel() {
           {posts.map((p) => (
             <article
               key={p.slug}
-              className="snap-start shrink-0 rounded-xl border border-orange-900 bg-neutral-900 p-6 w-[340px] h-[180px] flex flex-col justify-between"
+              className="snap-start shrink-0 rounded-xl border border-orange-200 bg-white p-6 w-[340px] h-[180px] flex flex-col justify-between"
             >
               <div>
                 <div className="text-xs text-gray-500 mb-2">
                   {p.created_at ? new Date(p.created_at).toLocaleDateString() : "—"}
                 </div>
-                <h3 className="text-lg font-semibold text-white leading-snug h-12 overflow-hidden">
+                <h3 className="text-lg font-semibold text-gray-900 leading-snug h-12 overflow-hidden">
                   {p.title}
                 </h3>
-                <p className="text-gray-400 text-sm mt-2 h-10 overflow-hidden">
+                <p className="text-gray-600 text-sm mt-2 h-10 overflow-hidden">
                   {p.excerpt || ""}
                 </p>
               </div>

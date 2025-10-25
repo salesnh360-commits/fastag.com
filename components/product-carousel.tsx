@@ -159,7 +159,7 @@ export function ProductCarousel({ products, title, subtitle, disableLinks = fals
           >
             {products.map((product) => (
               <div key={product.id} className="flex-shrink-0 px-3" style={{ width: `${100 / itemsPerView}%` }}>
-                <Card className="group hover:shadow-xl transition-all duration-300 border border-orange-900 bg-neutral-900 text-gray-200 h-full">
+                <Card className="group hover:shadow-xl transition-all duration-300 border border-orange-200 bg-white text-gray-900 h-full">
                   <CardContent className="p-0 h-full flex flex-col">
                     {disableLinks ? (
                       <div
@@ -198,19 +198,19 @@ export function ProductCarousel({ products, title, subtitle, disableLinks = fals
                       <div className="space-y-2 flex-1">
                         {disableLinks ? (
                           <h3
-                            className="font-semibold text-white line-clamp-2 min-h-[3rem] cursor-pointer hover:text-orange-400 transition-colors"
+                            className="font-semibold text-gray-900 line-clamp-2 min-h-[3rem] cursor-pointer hover:text-orange-600 transition-colors"
                             onClick={() => openProductModal(product)}
                           >
                             {product.name}
                           </h3>
                         ) : (
                           <Link href={`/product/${product.id}`}>
-                            <h3 className="font-semibold text-white line-clamp-2 min-h-[3rem] cursor-pointer hover:text-orange-400 transition-colors">
+                            <h3 className="font-semibold text-gray-900 line-clamp-2 min-h-[3rem] cursor-pointer hover:text-orange-600 transition-colors">
                               {product.name}
                             </h3>
                           </Link>
                         )}
-                        <p className="text-sm text-white/60 min-h-[2.5rem] line-clamp-2">{product.description}</p>
+                        <p className="text-sm text-gray-600 min-h-[2.5rem] line-clamp-2">{product.description}</p>
                       </div>
 
                       {product.features && (
@@ -234,12 +234,12 @@ export function ProductCarousel({ products, title, subtitle, disableLinks = fals
                             />
                           ))}
                         </div>
-                        <span className="text-sm text-white/60">({product.reviews})</span>
+                        <span className="text-sm text-gray-500">({product.reviews})</span>
                       </div>
 
                       <div className="flex items-center space-x-2 min-h-[2rem]">
-                        <span className="text-2xl font-bold text-white">{product.price}</span>
-                        <span className="text-lg text-white/50 line-through">{product.originalPrice}</span>
+                        <span className="text-2xl font-bold text-gray-900">{product.price}</span>
+                        <span className="text-lg text-gray-400 line-through">{product.originalPrice}</span>
                       </div>
 
                       <div className="pt-2">

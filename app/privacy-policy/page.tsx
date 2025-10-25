@@ -19,11 +19,11 @@ import {
 import Link from "next/link"
 
 export const metadata: Metadata = {
-  title: "Privacy Policy - NH360 FASTag | Data Protection & Privacy",
+  title: "Privacy Policy - NH360 FASTag Solutions",
   description:
-    "Learn how NH360 FASTag collects, uses, and protects your personal information. Read about your privacy rights and our data practices.",
+    "Learn how NH360 FASTag Solutions collects, uses, and protects your personal information. Read about your privacy rights and our data practices.",
   openGraph: {
-    title: "Privacy Policy - NH360 FASTag",
+    title: "Privacy Policy - NH360 FASTag Solutions",
     description: "Your privacy matters. Learn how we protect your information.",
     images: ["/placeholder.jpg"],
   },
@@ -32,24 +32,27 @@ export const metadata: Metadata = {
 export default function PrivacyPolicyPage() {
   const lastUpdated = "January 15, 2025"
   const companyInfo = {
-    name: "NH360 FASTag",
-    address: "India (PAN‑India Service)",
-    email: "support@nh360fastag.com",
-    phone: "+91-0000000000",
+    name: "NH360 FASTag Solutions",
+    corporateAddress:
+      "6th Floor, Block C, Hanudev Infopark, Sf.No.558/2, Udayampalayam Main Rd, KR Puram, NavaIndia, Coimbatore, Tamil Nadu 641028",
+    registeredAddress:
+      "2nd Floor, Isha Towers, 222/4, New Scheme Rd, near KVB Bank, Pappanaickenpalayam, Coimbatore, Tamil Nadu 641037",
+    emails: ["info@nh360fastag.com", "support@nh360fastagsolutions.com"],
+    phones: ["+91-8667460935", "+91-8667460635"],
   }
 
   const dataCategories = [
     {
       title: "Personal Information",
       icon: <Users className="h-6 w-6" />,
-      description: "Name, email, phone number, shipping address",
-      examples: ["Full name", "Email address", "Phone number", "Delivery address"],
+      description: "Name, email, phone number, address",
+      examples: ["Full name", "Email address", "Phone number", "Address"],
     },
     {
-      title: "Order Information",
+      title: "Service Information",
       icon: <FileText className="h-6 w-6" />,
-      description: "Purchase history, order details, payment information",
-      examples: ["Order numbers", "Product preferences", "Payment method", "Delivery status"],
+      description: "FASTag-related details needed to provide services",
+      examples: ["Vehicle details", "Issuer/bank", "KYC status", "Recharge info"],
     },
     {
       title: "Technical Data",
@@ -61,88 +64,63 @@ export default function PrivacyPolicyPage() {
       title: "Communication Data",
       icon: <Mail className="h-6 w-6" />,
       description: "Customer service interactions, feedback",
-      examples: ["Support tickets", "Product reviews", "Survey responses", "Chat transcripts"],
+      examples: ["Support tickets", "Emails", "Phone interactions", "Chat transcripts"],
     },
   ]
 
   const dataUsage = [
     {
-      purpose: "Order Processing",
-      description: "To process and fulfill your orders, including payment processing and delivery coordination.",
-      examples: ["Payment verification", "Shipping coordination", "Order tracking"],
+      purpose: "Service Delivery",
+      description: "To provide FASTag issuance, recharge assistance, KYC updates and related support.",
+      examples: ["KYC facilitation", "Recharge help", "Dispute support"],
     },
     {
       purpose: "Customer Support",
-      description: "To provide personalized customer service and technical support.",
-      examples: ["Issue resolution", "Product guidance", "Warranty claims"],
+      description: "To respond to queries, troubleshoot and improve service quality.",
+      examples: ["Issue resolution", "Verification", "Follow-ups"],
     },
     {
-      purpose: "Product Improvement",
-      description: "To analyze usage patterns and improve our products and services.",
-      examples: ["Feature development", "Quality improvements", "User experience optimization"],
-    },
-    {
-      purpose: "Marketing Communications",
-      description: "To send relevant product updates, offers, and newsletters (with your consent).",
-      examples: ["New product announcements", "Special offers", "Sleep tips and advice"],
+      purpose: "Improvement & Security",
+      description: "To analyze usage patterns, enhance services and maintain security.",
+      examples: ["Feature improvements", "Fraud detection", "Audit logs"],
     },
     {
       purpose: "Legal Compliance",
-      description: "To comply with applicable laws, regulations, and legal processes.",
-      examples: ["Tax reporting", "Regulatory requirements", "Legal proceedings"],
+      description: "To comply with applicable laws and regulatory requirements.",
+      examples: ["Tax compliance", "Regulatory requests", "Court orders"],
     },
   ]
 
   const userRights = [
     {
       right: "Access Your Data",
-      description: "Request a copy of all personal information we hold about you.",
+      description: "Request a copy of personal information we hold about you.",
       icon: <Eye className="h-5 w-5" />,
     },
     {
       right: "Correct Your Data",
-      description: "Request correction of inaccurate or incomplete personal information.",
+      description: "Request correction of inaccurate or incomplete information.",
       icon: <FileText className="h-5 w-5" />,
     },
     {
       right: "Delete Your Data",
-      description: "Request deletion of your personal information (subject to legal requirements).",
+      description: "Request deletion of personal information subject to law.",
       icon: <AlertTriangle className="h-5 w-5" />,
     },
     {
       right: "Data Portability",
-      description: "Request transfer of your data to another service provider.",
+      description: "Request transfer of your data to another provider.",
       icon: <Database className="h-5 w-5" />,
     },
     {
       right: "Withdraw Consent",
-      description: "Withdraw consent for marketing communications at any time.",
+      description: "Opt out of marketing communications at any time.",
       icon: <Mail className="h-5 w-5" />,
-    },
-    {
-      right: "Lodge Complaints",
-      description: "File complaints with relevant data protection authorities.",
-      icon: <Shield className="h-5 w-5" />,
     },
   ]
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Header */}
-      <header className="border-b border-gray-100 bg-white sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center space-x-2">
-            <div className="text-2xl font-bold text-orange-600">NH360 FASTag</div>
-          </Link>
-          <nav className="hidden md:flex items-center space-x-8">
-            <Link href="/#buy" className="text-gray-700 hover:text-orange-600 transition-colors">Buy FASTag</Link>
-            <Link href="/#recharge" className="text-gray-700 hover:text-orange-600 transition-colors">Recharge</Link>
-            <Link href="/#services" className="text-gray-700 hover:text-orange-600 transition-colors">Services</Link>
-            <Link href="/contact" className="text-gray-700 hover:text-orange-600 transition-colors">Contact</Link>
-          </nav>
-          <Button asChild className="bg-orange-600 hover:bg-orange-700 text-white"><Link href="/#buy">Buy FASTag</Link></Button>
-        </div>
-      </header>
 
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-orange-50 to-white py-16">
@@ -166,7 +144,7 @@ export default function PrivacyPolicyPage() {
       {/* Company Information */}
       <section className="py-12">
         <div className="container mx-auto px-4">
-          <Card className="border-0 shadow-lg">
+          <Card className="border border-orange-200 bg-white text-gray-900 shadow-sm">
             <CardContent className="p-8">
               <div className="grid md:grid-cols-2 gap-8">
                 <div className="space-y-4">
@@ -175,18 +153,32 @@ export default function PrivacyPolicyPage() {
                     We are committed to protecting your privacy and ensuring the security of your personal information.
                     This policy explains how we collect, use, and safeguard your data.
                   </p>
-                  <div className="space-y-2">
-                    <div className="flex items-center space-x-2">
-                      <MapPin className="h-4 w-4 text-orange-600" />
-                      <span className="text-gray-700">{companyInfo.address}</span>
+                  <div className="space-y-3">
+                    <div className="flex items-start gap-2">
+                      <MapPin className="h-4 w-4 text-orange-600 mt-0.5" />
+                      <div className="text-gray-700">
+                        <div className="font-medium">Corporate Office</div>
+                        <div>{companyInfo.corporateAddress}</div>
+                      </div>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <Mail className="h-4 w-4 text-orange-600" />
-                      <span className="text-gray-700">{companyInfo.email}</span>
+                    <div className="flex items-start gap-2">
+                      <MapPin className="h-4 w-4 text-orange-600 mt-0.5" />
+                      <div className="text-gray-700">
+                        <div className="font-medium">Registered Office</div>
+                        <div>{companyInfo.registeredAddress}</div>
+                      </div>
                     </div>
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-start gap-2">
+                      <Mail className="h-4 w-4 text-orange-600 mt-0.5" />
+                      <div className="text-gray-700 space-y-0.5">
+                        {companyInfo.emails.map((e) => (
+                          <div key={e}>{e}</div>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
                       <Phone className="h-4 w-4 text-orange-600" />
-                      <span className="text-gray-700">{companyInfo.phone}</span>
+                      <span className="text-gray-700">{companyInfo.phones.join(" / ")}</span>
                     </div>
                   </div>
                 </div>
@@ -207,16 +199,16 @@ export default function PrivacyPolicyPage() {
         </div>
       </section>
 
-      {/* Information We Collect */}
-      <section className="py-16">
+      {/* What We Collect */}
+      <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="text-center space-y-4 mb-12">
             <h2 className="text-3xl font-bold text-gray-900">Information We Collect</h2>
-            <p className="text-xl text-gray-600">We collect various types of information to provide you with better service</p>
+            <p className="text-xl text-gray-600">We collect only what we need to deliver our services</p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {dataCategories.map((category, index) => (
-              <Card key={index} className="border-0 shadow-lg">
+              <Card key={index} className="border border-orange-200 bg-white text-gray-900 shadow-sm">
                 <CardContent className="p-6 space-y-4">
                   <div className="inline-flex items-center justify-center w-12 h-12 bg-orange-100 text-orange-600 rounded-full">
                     {category.icon}
@@ -239,7 +231,7 @@ export default function PrivacyPolicyPage() {
       </section>
 
       {/* How We Use Your Information */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-16">
         <div className="container mx-auto px-4">
           <div className="text-center space-y-4 mb-12">
             <h2 className="text-3xl font-bold text-gray-900">How We Use Your Information</h2>
@@ -247,7 +239,7 @@ export default function PrivacyPolicyPage() {
           </div>
           <div className="grid md:grid-cols-2 gap-8">
             {dataUsage.map((usage, index) => (
-              <Card key={index} className="border-0 shadow-lg">
+              <Card key={index} className="border border-orange-200 bg-white text-gray-900 shadow-sm">
                 <CardContent className="p-6 space-y-4">
                   <h3 className="text-lg font-semibold text-gray-900">{usage.purpose}</h3>
                   <p className="text-gray-600">{usage.description}</p>
@@ -267,7 +259,7 @@ export default function PrivacyPolicyPage() {
       </section>
 
       {/* Data Security */}
-      <section className="py-16">
+      <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <div className="text-center space-y-4 mb-12">
@@ -281,7 +273,7 @@ export default function PrivacyPolicyPage() {
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900">Encryption</h3>
                 <p className="text-gray-600">
-                  All data is encrypted using industry-standard SSL/TLS protocols during transmission and storage.
+                  Data in transit is protected with SSL/TLS and stored securely with access controls.
                 </p>
               </div>
               <div className="text-center space-y-4">
@@ -290,7 +282,7 @@ export default function PrivacyPolicyPage() {
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900">Access Control</h3>
                 <p className="text-gray-600">
-                  Strict access controls ensure only authorized personnel can access your personal information.
+                  Only authorized personnel can access personal information, on a need-to-know basis.
                 </p>
               </div>
               <div className="text-center space-y-4">
@@ -299,7 +291,7 @@ export default function PrivacyPolicyPage() {
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900">Secure Storage</h3>
                 <p className="text-gray-600">
-                  Your data is stored on secure servers with regular backups and monitoring systems.
+                  We maintain secure systems, backups and monitoring to protect your data.
                 </p>
               </div>
             </div>
@@ -308,7 +300,7 @@ export default function PrivacyPolicyPage() {
       </section>
 
       {/* Your Rights */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-16">
         <div className="container mx-auto px-4">
           <div className="text-center space-y-4 mb-12">
             <h2 className="text-3xl font-bold text-gray-900">Your Rights</h2>
@@ -316,9 +308,9 @@ export default function PrivacyPolicyPage() {
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {userRights.map((right, index) => (
-              <Card key={index} className="border-0 shadow-lg">
-                <CardContent className="p-6 space-y-4">
-                  <div className="inline-flex items-center justify-center w-12 h-12 bg-orange-100 text-orange-600 rounded-full">
+              <Card key={index} className="border border-orange-200 bg-white text-gray-900 shadow-sm">
+                <CardContent className="p-6 space-y-2">
+                  <div className="inline-flex items-center justify-center w-10 h-10 bg-orange-100 text-orange-600 rounded-full">
                     {right.icon}
                   </div>
                   <h3 className="text-lg font-semibold text-gray-900">{right.right}</h3>
@@ -330,38 +322,20 @@ export default function PrivacyPolicyPage() {
         </div>
       </section>
 
-      {/* Cookies and Tracking */}
-      <section className="py-16">
+      {/* Cookies */}
+      <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center space-y-4 mb-12">
-              <h2 className="text-3xl font-bold text-gray-900">Cookies and Tracking</h2>
-              <p className="text-xl text-gray-600">How we use cookies and tracking technologies</p>
+          <div className="max-w-4xl mx-auto space-y-6">
+            <div className="flex items-center gap-3">
+              <Cookie className="h-6 w-6 text-orange-600" />
+              <h2 className="text-2xl font-bold text-gray-900">Cookies & Tracking</h2>
             </div>
-            <Card className="border-0 shadow-lg">
-              <CardContent className="p-8 space-y-6">
-                <div className="grid md:grid-cols-2 gap-8">
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-gray-900">Essential Cookies</h3>
-                    <p className="text-gray-600">
-                      These cookies are necessary for the website to function properly. They enable basic functions like
-                      page navigation and access to secure areas.
-                    </p>
-                  </div>
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-gray-900">Analytics Cookies</h3>
-                    <p className="text-gray-600">
-                      We use analytics cookies to understand how visitors interact with our website, helping us improve
-                      our services.
-                    </p>
-                  </div>
-                </div>
-                <div className="pt-6 border-t border-gray-200">
-                  <p className="text-gray-600">
-                    You can control cookie settings through your browser preferences. However, disabling certain cookies
-                    may affect website functionality.
-                  </p>
-                </div>
+            <Card className="border border-orange-200 bg-white text-gray-900 shadow-sm">
+              <CardContent className="p-6 space-y-3">
+                <p className="text-gray-700">
+                  We use essential cookies to enable core functionality, and analytics cookies (where permitted) to
+                  understand service usage. You can control cookies via your browser settings.
+                </p>
               </CardContent>
             </Card>
           </div>
@@ -382,21 +356,25 @@ export default function PrivacyPolicyPage() {
                   <Mail className="h-6 w-6" />
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900">Email Us</h3>
-                <p className="text-gray-600">{companyInfo.email}</p>
+                <p className="text-gray-600">{companyInfo.emails.join(" | ")}</p>
               </div>
               <div className="space-y-4">
                 <div className="inline-flex items-center justify-center w-12 h-12 bg-orange-100 text-orange-600 rounded-full">
                   <Phone className="h-6 w-6" />
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900">Call Us</h3>
-                <p className="text-gray-600">{companyInfo.phone}</p>
+                <p className="text-gray-600">{companyInfo.phones.join(" / ")}</p>
               </div>
               <div className="space-y-4">
                 <div className="inline-flex items-center justify-center w-12 h-12 bg-orange-100 text-orange-600 rounded-full">
                   <MapPin className="h-6 w-6" />
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900">Visit Us</h3>
-                <p className="text-gray-600">{companyInfo.address}</p>
+                <p className="text-gray-600">
+                  Corporate: {companyInfo.corporateAddress}
+                  <br />
+                  Registered: {companyInfo.registeredAddress}
+                </p>
               </div>
             </div>
             <div className="pt-8">
@@ -410,70 +388,6 @@ export default function PrivacyPolicyPage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div className="space-y-4">
-              <div className="flex items-center space-x-2">
-                <div className="text-2xl font-bold text-orange-500">NH360 FASTag</div>
-              </div>
-              <p className="text-gray-400">FASTag Sales & Services Across India</p>
-              <p className="text-gray-400">Buy FASTag, recharge, and get 24×7 support for all issuers.</p>
-            </div>
-            <div className="space-y-4">
-              <h4 className="text-lg font-semibold">Services</h4>
-              <div className="space-y-2 text-gray-400">
-                <Link href="/#buy" className="block hover:text-orange-500 transition-colors">Buy FASTag</Link>
-                <Link href="/#recharge" className="block hover:text-orange-500 transition-colors">Recharge</Link>
-                <Link href="/#services" className="block hover:text-orange-500 transition-colors">KYC Update</Link>
-                <Link href="/#services" className="block hover:text-orange-500 transition-colors">Blacklist Removal</Link>
-                <Link href="/#services" className="block hover:text-orange-500 transition-colors">Fleet Solutions</Link>
-              </div>
-            </div>
-            <div className="space-y-4">
-              <h4 className="text-lg font-semibold">Support</h4>
-              <div className="space-y-2 text-gray-400">
-                <Link href="/about" className="block hover:text-orange-500 transition-colors">
-                  About Us
-                </Link>
-                <Link href="/faq" className="block hover:text-orange-500 transition-colors">
-                  FAQ
-                </Link>
-                <Link href="/contact" className="block hover:text-orange-500 transition-colors">
-                  Contact
-                </Link>
-                <Link href="/privacy-policy" className="block hover:text-orange-500 transition-colors">
-                  Privacy Policy
-                </Link>
-                <Link href="/return-policy" className="block hover:text-orange-500 transition-colors">
-                  Return Policy
-                </Link>
-              </div>
-            </div>
-            <div className="space-y-4">
-              <h4 className="text-lg font-semibold">Connect</h4>
-              <div className="space-y-2 text-gray-400">
-                <Link href="#" className="block hover:text-orange-500 transition-colors">
-                  Facebook
-                </Link>
-                <Link href="#" className="block hover:text-orange-500 transition-colors">
-                  Instagram
-                </Link>
-                <Link href="#" className="block hover:text-orange-500 transition-colors">
-                  Twitter
-                </Link>
-                <Link href="#" className="block hover:text-orange-500 transition-colors">
-                  YouTube
-                </Link>
-              </div>
-            </div>
-          </div>
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2025 NH360 FASTag. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
     </div>
   )
-} 
+}

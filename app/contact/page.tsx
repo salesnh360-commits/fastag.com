@@ -22,20 +22,23 @@ export default function ContactPage() {
     {
       icon: <Phone className="h-6 w-6" />,
       title: "Phone",
-      details: ["8667460935", "8667460635"],
+      details: ["+91-8667460935", "+91-8667460635"],
       description: "Mon-Sat, 9 AM - 7 PM",
     },
     {
       icon: <Mail className="h-6 w-6" />,
       title: "Email",
-      details: ["support@nh360fastag.com"],
+      details: ["info@nh360fastag.com", "support@nh360fastagsolutions.com"],
       description: "We'll respond within 24 hours",
     },
     {
       icon: <MapPin className="h-6 w-6" />,
       title: "Address",
-      details: ["54RC+F3, Kakapalayam", "Paduvampalli, Tamil Nadu 641659"],
-      description: "Visit our showroom",
+      details: [
+        "6th Floor, Block C, Hanudev Infopark, Sf.No.558/2",
+        "Udayampalayam Main Rd, KR Puram, NavaIndia, Coimbatore, Tamil Nadu 641028",
+      ],
+      description: "Corporate Office",
     },
     {
       icon: <Clock className="h-6 w-6" />,
@@ -47,21 +50,7 @@ export default function ContactPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Header */}
-      <header className="border-b border-gray-100 bg-white sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center space-x-2">
-            <div className="text-2xl font-bold text-orange-600">NH360 FASTag</div>
-          </Link>
-          <nav className="hidden md:flex items-center space-x-8">
-            <Link href="/#buy" className="text-gray-700 hover:text-orange-600 transition-colors">Buy FASTag</Link>
-            <Link href="/#recharge" className="text-gray-700 hover:text-orange-600 transition-colors">Recharge</Link>
-            <Link href="/#services" className="text-gray-700 hover:text-orange-600 transition-colors">Services</Link>
-            <Link href="/contact" className="text-orange-600 font-medium">Contact</Link>
-          </nav>
-          <Button asChild className="bg-orange-600 hover:bg-orange-700 text-white"><Link href="/#buy">Buy FASTag</Link></Button>
-        </div>
-      </header>
+      {/* Global SiteChrome already injects the main header. */}
 
       {/* Contact Hero */}
       <section className="bg-gradient-to-br from-orange-50 to-white py-16">
@@ -78,7 +67,7 @@ export default function ContactPage() {
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
             {contactInfo.map((info, index) => (
-              <Card key={index} className="text-center border-0 shadow-lg hover:shadow-xl transition-shadow">
+              <Card key={index} className="text-center border border-orange-200 bg-white shadow-lg hover:shadow-xl transition-shadow">
                 <CardContent className="p-8 space-y-4">
                   <div className="inline-flex items-center justify-center w-16 h-16 bg-orange-100 text-orange-600 rounded-full">
                     {info.icon}
@@ -100,7 +89,7 @@ export default function ContactPage() {
           {/* Contact Form & Map */}
           <div className="grid lg:grid-cols-2 gap-12">
             {/* Contact Form */}
-            <Card className="border-0 shadow-xl">
+            <Card className="border border-orange-200 bg-white shadow-xl">
               <CardContent className="p-8">
                 <div className="space-y-6">
                   <div className="space-y-2">
@@ -151,7 +140,7 @@ export default function ContactPage() {
 
             {/* Map & Additional Info */}
             <div className="space-y-8">
-              <Card className="border-0 shadow-xl">
+              <Card className="border border-orange-200 bg-white shadow-xl">
                 <CardContent className="p-8">
                   <div className="space-y-4">
                     <h3 className="text-xl font-bold text-gray-900">Visit Our Location</h3>
@@ -166,7 +155,7 @@ export default function ContactPage() {
                 </CardContent>
               </Card>
 
-              <Card className="border-0 shadow-xl">
+              <Card className="border border-orange-200 bg-white shadow-xl">
                 <CardContent className="p-8">
                   <div className="space-y-4">
                     <h3 className="text-xl font-bold text-gray-900">Quick Support</h3>
@@ -175,14 +164,14 @@ export default function ContactPage() {
                         <Phone className="h-5 w-5 text-orange-600" />
                         <div>
                           <p className="font-medium text-gray-900">Call Us Directly</p>
-                          <p className="text-sm text-gray-600">8667460935 / 8667460635</p>
+                          <p className="text-sm text-gray-600">+91-8667460935 / +91-8667460635</p>
                         </div>
                       </div>
                       <div className="flex items-center space-x-3">
                         <Mail className="h-5 w-5 text-orange-600" />
                         <div>
                           <p className="font-medium text-gray-900">Email Support</p>
-                          <p className="text-sm text-gray-600">support@nh360fastag.com</p>
+                          <p className="text-sm text-gray-600">support@nh360fastagsolutions.com</p>
                         </div>
                       </div>
                     </div>
@@ -204,104 +193,29 @@ export default function ContactPage() {
         <div className="container mx-auto px-4">
           <div className="text-center space-y-4 mb-12">
             <h2 className="text-3xl font-bold text-gray-900">Frequently Asked Questions</h2>
-            <p className="text-gray-600">Quick answers to common questions</p>
+            <p className="text-gray-600">FASTag sales, recharge and service FAQs</p>
           </div>
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900">What is your return policy?</h3>
-              <p className="text-gray-600">
-                We offer a 100-night trial period. If you're not satisfied, you can return the product for a full
-                refund.
-              </p>
+              <h3 className="text-lg font-semibold text-gray-900">How fast can I get a FASTag?</h3>
+              <p className="text-gray-600">Most tags are activated the same day once KYC is complete. We guide you through the process end-to-end.</p>
             </div>
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900">Do you offer warranty?</h3>
-              <p className="text-gray-600">
-                Yes, all our mattresses come with a 10-year comprehensive warranty covering manufacturing defects.
-              </p>
+              <h3 className="text-lg font-semibold text-gray-900">Which banks/issuers do you support?</h3>
+              <p className="text-gray-600">We assist across major issuers including HDFC, ICICI, SBI, Axis, IDFC FIRST, Kotak, Paytm, Airtel Payments Bank and more.</p>
             </div>
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900">What areas do you deliver to?</h3>
-              <p className="text-gray-600">
-                We provide free delivery across India. Delivery typically takes 3-7 business days depending on your
-                location.
-              </p>
+              <h3 className="text-lg font-semibold text-gray-900">Can you help with KYC and blacklist issues?</h3>
+              <p className="text-gray-600">Yes. We provide document guidance for KYC and coordinate with issuers to resolve blacklist due to low balance or KYC problems.</p>
             </div>
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900">How can I track my order?</h3>
-              <p className="text-gray-600">
-                Once your order ships, you'll receive a tracking number via email and SMS to monitor your delivery
-                status.
-              </p>
+              <h3 className="text-lg font-semibold text-gray-900">What documents are required?</h3>
+              <p className="text-gray-600">Typically RC, PAN, and ID proof. Requirements vary by issuer and vehicle class; our team confirms what’s needed for your case.</p>
             </div>
           </div>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div className="space-y-4">
-              <div className="flex items-center space-x-2">
-                <div className="text-2xl font-bold text-orange-500">NH360 FASTag</div>
-              </div>
-              <p className="text-gray-400">FASTag Sales & Services Across India</p>
-              <p className="text-gray-400">Buy FASTag, recharge, and get 24×7 support for all issuers.</p>
-            </div>
-            <div className="space-y-4">
-              <h4 className="text-lg font-semibold">Services</h4>
-              <div className="space-y-2 text-gray-400">
-                <Link href="/#buy" className="block hover:text-orange-500 transition-colors">Buy FASTag</Link>
-                <Link href="/#recharge" className="block hover:text-orange-500 transition-colors">Recharge</Link>
-                <Link href="/#services" className="block hover:text-orange-500 transition-colors">KYC Update</Link>
-                <Link href="/#services" className="block hover:text-orange-500 transition-colors">Blacklist Removal</Link>
-                <Link href="/#services" className="block hover:text-orange-500 transition-colors">Fleet Solutions</Link>
-              </div>
-            </div>
-            <div className="space-y-4">
-              <h4 className="text-lg font-semibold">Support</h4>
-              <div className="space-y-2 text-gray-400">
-                <Link href="/about" className="block hover:text-orange-500 transition-colors">
-                  About Us
-                </Link>
-                <Link href="/faq" className="block hover:text-orange-500 transition-colors">
-                  FAQ
-                </Link>
-                <Link href="/contact" className="block hover:text-orange-500 transition-colors">
-                  Contact
-                </Link>
-                <Link href="/privacy-policy" className="block hover:text-orange-500 transition-colors">
-                  Privacy Policy
-                </Link>
-                <Link href="/return-policy" className="block hover:text-orange-500 transition-colors">
-                  Return Policy
-                </Link>
-              </div>
-            </div>
-            <div className="space-y-4">
-              <h4 className="text-lg font-semibold">Connect</h4>
-              <div className="space-y-2 text-gray-400">
-                <Link href="#" className="block hover:text-orange-500 transition-colors">
-                  Facebook
-                </Link>
-                <Link href="#" className="block hover:text-orange-500 transition-colors">
-                  Instagram
-                </Link>
-                <Link href="#" className="block hover:text-orange-500 transition-colors">
-                  Twitter
-                </Link>
-                <Link href="#" className="block hover:text-orange-500 transition-colors">
-                  YouTube
-                </Link>
-              </div>
-            </div>
-          </div>
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2025 NH360 FASTag. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
     </div>
   )
 }
+

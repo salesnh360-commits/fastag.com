@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -18,10 +18,11 @@ export default function SaasHeader() {
     { href: "/#buy", label: "Buy FASTag" },
     { href: "/#recharge", label: "Recharge FASTag" },
     { href: "/#services", label: "Get Support" },
+    { href: "/products", label: "Products" },
     { href: "/#blog", label: "Blog" },
     { href: "/contact", label: "Contact Us" },
   ]
-  const [nav, setNav] = useState<{ href: string; label: string; target?: string | null; children?: any[] }[]>(defaultNav)
+  const [nav, setNav] = useState<{ href: string; label: string; target?: string; children?: any[] }[]>(defaultNav)
   const MENU_SLUG = (process.env.NEXT_PUBLIC_MENU_SLUG || "main").toLowerCase()
   const SUB_BUYFASTAG = (process.env.NEXT_PUBLIC_MENU_SUB_BUYFASTAG || "").toLowerCase()
 

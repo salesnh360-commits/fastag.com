@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import Link from "next/link"
 import { useEffect, useMemo, useRef, useState } from "react"
@@ -62,15 +62,15 @@ export default function ResizableNavbar({
   function NavSubList({ items, nested = false }: { items: Item[]; nested?: boolean }) {
     return (
       <div
-        className={`relative min-w-56 rounded-xl border border-orange-200 bg-white/95 backdrop-blur-sm shadow-lg ring-1 ring-black/5 p-2
+        className={`relative min-w-56 rounded-lg border border-gray-200 bg-white shadow-lg ring-1 ring-black/10 p-2
                     transform ${nested ? 'translate-x-1' : 'translate-y-1'} transition-transform duration-200 ease-out
                     ${nested ? 'group-hover/item:translate-x-0' : 'group-hover:translate-y-0 group-focus-within:translate-y-0'}`}
       >
         {!nested && (
-          <div className="pointer-events-none absolute -top-1 left-1/2 h-2 w-2 -translate-x-1/2 rotate-45 bg-white border-l border-t border-orange-200" />
+          <div className="pointer-events-none absolute -top-1 left-1/2 h-2 w-2 -translate-x-1/2 rotate-45 bg-white border-l border-t border-gray-200" />
         )}
         {nested && (
-          <div className="pointer-events-none absolute left-[-5px] top-3 h-2 w-2 rotate-45 bg-white border-b border-r border-orange-200" />
+          <div className="pointer-events-none absolute left-[-5px] top-3 h-2 w-2 rotate-45 bg-white border-b border-r border-gray-200" />
         )}
         {items.map((c) => {
           const hasKids = (c.children || []).length > 0
@@ -79,7 +79,7 @@ export default function ResizableNavbar({
               <Link
                 href={c.href}
                 target={c.target}
-                className={`block rounded-md px-3 py-2 text-sm text-gray-700 hover:text-gray-900 hover:bg-orange-50 ${hasKids ? 'pr-8' : ''}`}
+                className={`block rounded-md px-3 py-2 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-50 ${hasKids ? 'pr-8' : ''}`}
               >
                 {c.label}
                 {hasKids && (
@@ -104,7 +104,7 @@ export default function ResizableNavbar({
   return (
     <div
       ref={containerRef}
-      className="relative hidden md:flex items-center gap-6 rounded-full border border-orange-200 bg-white/90 px-2 py-1"
+      className="relative hidden md:flex items-center gap-6 rounded-full border border-gray-200 bg-white/90 px-2 py-1 shadow-sm"
       onMouseLeave={() => moveTo(activeIndex)}
     >
       {/* Indicator bar */}
@@ -116,7 +116,7 @@ export default function ResizableNavbar({
         <div key={item.href} className="relative group" onMouseEnter={() => moveTo(i)} onFocus={() => moveTo(i)}>
           <Link
             href={item.href}
-            ref={(el) => (itemRefs.current[i] = el)}
+            ref={(el) => { itemRefs.current[i] = el }}
             onClick={() => setActiveIndex(i)}
             target={item.target}
             className={`relative rounded-full px-3 py-2 text-sm font-medium transition-colors hover:text-gray-900 ${

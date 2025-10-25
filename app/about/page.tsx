@@ -1,4 +1,4 @@
-import type { Metadata } from "next"
+﻿import type { Metadata } from "next"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -22,7 +22,7 @@ import Link from "next/link"
 export const metadata: Metadata = {
   title: "About NH360 FASTag | FASTag Sales & Support Across India",
   description:
-    "NH360 FASTag issues FASTags, provides recharge assistance, KYC updates, blacklist removal, and fleet solutions with PAN‑India coverage and 24×7 support.",
+    "NH360 FASTag issues FASTags, provides recharge assistance, KYC updates, blacklist removal, and fleet solutions with PAN-India coverage and 24×7 support.",
   openGraph: {
     title: "About NH360 FASTag",
     description: "Nationwide FASTag sales, recharge, and support for individuals and fleets.",

@@ -1,4 +1,4 @@
-import type { Metadata } from "next"
+﻿import type { Metadata } from "next"
 import Link from "next/link"
 import { headers } from "next/headers"
 
@@ -19,7 +19,7 @@ async function fetchPost(baseUrl: string, slug: string) {
 }
 
 export default async function BlogPostPage({ params }: { params: { slug: string } }) {
-  const h = headers()
+  const h = await headers()
   const proto = h.get("x-forwarded-proto") ?? "http"
   const host = h.get("host") ?? "localhost:3000"
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || `${proto}://${host}`
