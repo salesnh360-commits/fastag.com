@@ -416,29 +416,7 @@ export default function ShopPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Header */}
-      <header className="border-b border-gray-100 bg-white sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center space-x-2">
-            <div className="text-2xl font-bold text-orange-600">NH360 FASTag</div>
-          </Link>
-          <nav className="hidden md:flex items-center space-x-8">
-            <Link href="/shop" className="text-orange-600 font-medium">
-              Shop
-            </Link>
-            <Link href="/about" className="text-gray-700 hover:text-orange-600 transition-colors">
-              About
-            </Link>
-            <Link href="/reviews" className="text-gray-700 hover:text-orange-600 transition-colors">
-              Reviews
-            </Link>
-            <Link href="/contact" className="text-gray-700 hover:text-orange-600 transition-colors">
-              Contact
-            </Link>
-          </nav>
-          <Button className="bg-orange-600 hover:bg-orange-700 text-white">Contact Us</Button>
-        </div>
-      </header>
+      {/* Header comes from global SiteChrome (SaasHeader). */}
 
       {/* Shop Hero */}
       <section className="bg-gradient-to-br from-orange-50 to-white py-16">

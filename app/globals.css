@@ -10,6 +10,10 @@ body {
   .text-balance {
     text-wrap: balance;
   }
+  /* Hexagon clip utility for infographic tiles */
+  .clip-hex {
+    clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+  }
 }
 
 @layer base {

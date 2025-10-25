@@ -176,21 +176,7 @@ export default function FAQPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Header */}
-      <header className="border-b border-gray-100 bg-white sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center space-x-2">
-            <div className="text-2xl font-bold text-orange-600">NH360 FASTag</div>
-          </Link>
-          <nav className="hidden md:flex items-center space-x-8">
-            <Link href="/#buy" className="text-gray-700 hover:text-orange-600 transition-colors">Buy FASTag</Link>
-            <Link href="/#recharge" className="text-gray-700 hover:text-orange-600 transition-colors">Recharge</Link>
-            <Link href="/#services" className="text-gray-700 hover:text-orange-600 transition-colors">Services</Link>
-            <Link href="/contact" className="text-gray-700 hover:text-orange-600 transition-colors">Contact</Link>
-          </nav>
-          <Button asChild className="bg-orange-600 hover:bg-orange-700 text-white"><Link href="/#buy">Buy FASTag</Link></Button>
-        </div>
-      </header>
+      {/* Header comes from global SiteChrome (SaasHeader). */}
 
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-orange-50 to-white py-16">

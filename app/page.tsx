@@ -7,6 +7,9 @@ import { CardSpotlight } from "@/components/ui/card-spotlight"
 import { ProductCarousel } from "@/components/product-carousel"
 import BlogCarousel from "@/components/blog-carousel"
 import { db } from "@/lib/db"
+import { FileText, Ban, RefreshCcw, HelpCircle } from "lucide-react"
+import InfographicSteps from "@/components/saas/InfographicSteps"
+import HexSteps from "@/components/saas/HexSteps"
 import {
   Accordion,
   AccordionItem,
@@ -48,44 +51,11 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Features strip */}
-      <section id="features" className="py-16">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-3 gap-6">
-            {[
-              { t: "FASTag Issuance", d: "Same-day activation with KYC help" },
-              { t: "Recharge Assistance", d: "Support for all issuers" },
-              { t: "Fleet Solutions", d: "Bulk issuance & reports" },
-            ].map((f, i) => (
-              <div key={i} className="rounded-xl border border-orange-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow">
-                <div className="w-10 h-10 rounded-md bg-orange-500/20 text-orange-300 flex items-center justify-center mb-3">{i + 1}</div>
-                <h3 className="text-lg font-semibold text-gray-900">{f.t}</h3>
-                <p className="text-gray-600">{f.d}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Infographic Steps */}
+      <InfographicSteps />
 
-      {/* How It Works */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900 mb-8">How it works</h2>
-          <div className="grid md:grid-cols-3 gap-6">
-            {[
-              { t: "Share Details", d: "Tell us about your vehicle and city." },
-              { t: "KYC & Issuer", d: "We guide you through KYC and bank selection." },
-              { t: "Activation", d: "Tag is activated and ready for tolls." },
-            ].map((s, i) => (
-              <div key={i} className="rounded-xl border border-orange-200 bg-white p-6">
-                <div className="w-8 h-8 rounded-md bg-orange-500/20 text-orange-300 flex items-center justify-center mb-3">{i + 1}</div>
-                <h3 className="text-lg font-semibold text-gray-900">{s.t}</h3>
-                <p className="text-gray-600 text-sm">{s.d}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* How It Works - Hex Style */}
+      <HexSteps />
 
       {/* Buy FASTag */}
       <section id="buy" className="py-16 border-t border-orange-900/50">
@@ -156,22 +126,26 @@ export default function HomePage() {
       </section>
 
       {/* Services */}
-      <section id="services" className="py-16 border-t border-orange-900/50">
+      <section id="services" className="relative py-16 border-t border-orange-900/50">
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(45%_60%_at_50%_40%,#fff7ed,transparent_60%)]" />
         <div className="container mx-auto px-4">
           <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900 mb-8">Services</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { t: "KYC Update", d: "Update KYC or change vehicle/owner details", href: "/support/kyc-update" },
-              { t: "Blacklist Removal", d: "Resolve blacklist due to KYC or low balance", href: "/support/blacklist-removal" },
-              { t: "Tag Replacement", d: "Replace damaged or lost FASTag", href: "/support/tag-replacement" },
-              { t: "Dispute Help", d: "Toll double-charge or debit disputes", href: "/support/dispute" },
-            ].map((c) => (
-              <Card key={c.t} className="border-orange-200 bg-white">
+              { t: "KYC Update", d: "Update KYC or change vehicle/owner details", href: "/support/kyc-update", color: "from-sky-500 to-sky-600", Icon: FileText },
+              { t: "Blacklist Removal", d: "Resolve blacklist due to KYC or low balance", href: "/support/blacklist-removal", color: "from-rose-500 to-rose-600", Icon: Ban },
+              { t: "Tag Replacement", d: "Replace damaged or lost FASTag", href: "/support/tag-replacement", color: "from-amber-500 to-orange-600", Icon: RefreshCcw },
+              { t: "Dispute Help", d: "Toll double-charge or debit disputes", href: "/support/dispute", color: "from-indigo-600 to-indigo-700", Icon: HelpCircle },
+            ].map(({ t, d, href, color, Icon }) => (
+              <Card key={t} className="border-orange-200 bg-white/90 shadow-sm hover:shadow-md transition-shadow">
                 <CardContent className="p-6 space-y-3">
-                  <h3 className="text-lg font-semibold text-gray-900">{c.t}</h3>
-                  <p className="text-gray-600 text-sm">{c.d}</p>
+                  <div className={`h-10 w-10 rounded-md bg-gradient-to-r ${color} text-white flex items-center justify-center`}>
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900">{t}</h3>
+                  <p className="text-gray-600 text-sm">{d}</p>
                   <Button asChild className="bg-orange-600 hover:bg-orange-700 text-white w-full">
-                    <Link href={c.href}>Start</Link>
+                    <Link href={href}>Start</Link>
                   </Button>
                 </CardContent>
               </Card>
