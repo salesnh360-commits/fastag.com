@@ -6,6 +6,7 @@ import "./globals.css"
 import { CartProvider } from "@/components/cart-context"
 import SiteChrome from "@/components/site-chrome"
 import Analytics from "@/components/analytics"
+import ConsentBanner from "@/components/consent-banner"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -90,6 +91,8 @@ export default function RootLayout({
         <CartProvider>
           <SiteChrome>{children}</SiteChrome>
         </CartProvider>
+        {/* Cookie Consent Banner (CMP) */}
+        <ConsentBanner />
         {/* Google Analytics */}
         <Suspense fallback={null}>
           <Analytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
