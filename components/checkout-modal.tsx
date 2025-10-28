@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -45,6 +45,21 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
   const [docs, setDocs] = useState<Record<string, string>>({})
   const [uploading, setUploading] = useState<Record<string, boolean>>({})
 
+  // Fulfillment selection state
+  const [fulfillmentMode, setFulfillmentMode] = useState<"delivery" | "pickup" | null>(null)
+  const [deliverySpeed, setDeliverySpeed] = useState<"instant" | "normal" | null>(null)
+  const [pickupOffices, setPickupOffices] = useState<Array<{
+    name: string
+    branchType: string
+    district: string
+    state: string
+    country: string
+    pincode: string
+  }>>([])
+  const [pickupLoading, setPickupLoading] = useState(false)
+  const [pickupError, setPickupError] = useState<string>("")
+  const [pickupSelection, setPickupSelection] = useState<string>("")
+
   const totalItems = state.items.reduce((sum, item) => sum + item.quantity, 0)
   const totalPrice = state.items.reduce((sum, item) => sum + item.price * item.quantity, 0)
   const totalOriginalPrice = state.items.reduce((sum, item) => sum + item.originalPrice * item.quantity, 0)
@@ -54,6 +69,18 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
 
   // Accept all valid Indian pincodes (6 digits, cannot start with 0)
   const isIndianPincode = (code: string) => /^[1-9]\d{5}$/.test(code)
+
+  // Instant delivery window helper
+  const isWithinInstantWindow = () => {
+    const now = new Date()
+    const hour = now.getHours()
+    return hour >= 8 && hour < 23
+  }
+
+  const instantEtaText = () => {
+    if (!isWithinInstantWindow()) return "Available 8:00 AM – 11:00 PM"
+    return "Estimated 3–7 hours today"
+  }
 
   const formatPrice = (price: number) => {
     return `₹${price.toLocaleString()}`
@@ -91,20 +118,56 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
     }
   }
 
+  // Fetch pickup locations when user selects pickup and pincode is valid
+  useEffect(() => {
+    const run = async () => {
+      if (!pincodeValid || fulfillmentMode !== "pickup") return
+      try {
+        setPickupLoading(true)
+        setPickupError("")
+        const res = await fetch(`/api/pincode/${pincode}`)
+        if (!res.ok) throw new Error("Failed to fetch nearby locations")
+        const data = await res.json()
+        const offices = Array.isArray(data?.offices) ? data.offices : []
+        setPickupOffices(offices)
+        if (offices.length > 0) {
+          const first = offices[0]
+          const label = `${first.name} (${first.branchType}), ${first.district}, ${first.state}`
+          setPickupSelection(label)
+        } else {
+          setPickupSelection("")
+        }
+      } catch (e: any) {
+        setPickupError(e?.message || "Could not load nearby locations")
+        setPickupOffices([])
+        setPickupSelection("")
+      } finally {
+        setPickupLoading(false)
+      }
+    }
+    run()
+  }, [fulfillmentMode, pincode, pincodeValid])
+
   const handleDetailsChange = (field: keyof CustomerDetails, value: string) => {
     setCustomerDetails({ ...customerDetails, [field]: value })
   }
 
   const isDetailsValid = () => {
-    return (
+    const base = (
       customerDetails.name.trim() !== "" &&
       customerDetails.email.trim() !== "" &&
       customerDetails.phone.trim() !== "" &&
-      customerDetails.address.trim() !== "" &&
-      customerDetails.city.trim() !== "" &&
-      customerDetails.state.trim() !== "" &&
       /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerDetails.email) &&
       /^\d{10}$/.test(customerDetails.phone)
+    )
+    if (fulfillmentMode === 'pickup') {
+      return base && Boolean(pickupSelection)
+    }
+    return (
+      base &&
+      customerDetails.address.trim() !== "" &&
+      customerDetails.city.trim() !== "" &&
+      customerDetails.state.trim() !== ""
     )
   }
 
@@ -148,6 +211,19 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
     const newOrderId = orderId || generateOrderId()
     setOrderId(newOrderId)
 
+    // Derive address fields based on fulfillment
+    let addressFinal = customerDetails.address
+    let cityFinal = customerDetails.city
+    let stateFinal = customerDetails.state
+    if (fulfillmentMode === 'pickup') {
+      addressFinal = pickupSelection ? `Pickup: ${pickupSelection}` : 'Pickup'
+      try {
+        const parts = (pickupSelection || '').split(',').map(s => s.trim())
+        cityFinal = parts.length >= 2 ? parts[parts.length - 2] : cityFinal
+        stateFinal = parts.length >= 1 ? parts[parts.length - 1] : stateFinal
+      } catch {}
+    }
+
     // Prepare order details for email
     const orderDetails = {
       orderId: newOrderId,
@@ -161,12 +237,16 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
         quantity: item.quantity,
         price: item.price,
       })),
-      address: customerDetails.address,
-      city: customerDetails.city,
-      state: customerDetails.state,
+      address: addressFinal,
+      city: cityFinal,
+      state: stateFinal,
       pincode: customerDetails.pincode,
       orderDate: new Date().toISOString(),
       docs: Object.entries(docs).map(([doc_type, url]) => ({ doc_type, url })),
+      deliveryPreference: {
+        mode: fulfillmentMode,
+        speed: deliverySpeed,
+      },
     }
 
     // Persist order for Admin dashboard
@@ -310,14 +390,99 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                         Great! We deliver to this area
                       </p>
                     )}
+
+                    {pincodeValid && (
+                      <div className="space-y-3 border rounded-lg p-4">
+                        <h4 className="text-sm font-medium text-gray-900">Choose Fulfillment</h4>
+                        <div className="flex items-center gap-6 text-sm">
+                          <label className="inline-flex items-center gap-2">
+                            <input
+                              type="radio"
+                              name="fulfillment"
+                              checked={fulfillmentMode === "delivery"}
+                              onChange={() => { setFulfillmentMode("delivery"); setDeliverySpeed(null); }}
+                            />
+                            <span>Delivery</span>
+                          </label>
+                          <label className="inline-flex items-center gap-2">
+                            <input
+                              type="radio"
+                              name="fulfillment"
+                              checked={fulfillmentMode === "pickup"}
+                              onChange={() => setFulfillmentMode("pickup")}
+                            />
+                            <span>Pickup</span>
+                          </label>
+                        </div>
+
+                        {fulfillmentMode === "delivery" && (
+                          <div className="space-y-2 mt-1">
+                            <div className="text-sm font-medium text-gray-700">Delivery Speed</div>
+                            <div className="flex items-center gap-6 text-sm">
+                              <label className="inline-flex items-center gap-2">
+                                <input
+                                  type="radio"
+                                  name="speed"
+                                  disabled={!isWithinInstantWindow()}
+                                  checked={deliverySpeed === "instant"}
+                                  onChange={() => setDeliverySpeed("instant")}
+                                />
+                                <span>Instant (3–7 hrs) <span className="text-gray-500">· {instantEtaText()}</span></span>
+                              </label>
+                              <label className="inline-flex items-center gap-2">
+                                <input
+                                  type="radio"
+                                  name="speed"
+                                  checked={deliverySpeed === "normal"}
+                                  onChange={() => setDeliverySpeed("normal")}
+                                />
+                                <span>Normal (within 2 days)</span>
+                              </label>
+                            </div>
+                          </div>
+                        )}
+
+                        {fulfillmentMode === "pickup" && (
+                          <div className="space-y-2 mt-1">
+                            <div className="text-sm font-medium text-gray-700">Choose Nearby Pickup Location</div>
+                            {pickupLoading && (
+                              <div className="text-sm text-gray-500">Loading nearby locations…</div>
+                            )}
+                            {pickupError && (
+                              <div className="text-sm text-red-600">{pickupError}</div>
+                            )}
+                            {!pickupLoading && !pickupError && (
+                              <select
+                                className="w-full border rounded px-3 py-2 text-sm"
+                                value={pickupSelection}
+                                onChange={(e) => setPickupSelection(e.target.value)}
+                              >
+                                {pickupOffices.length === 0 && (
+                                  <option value="">No nearby offices found for this pincode</option>
+                                )}
+                                {pickupOffices.map((o, idx) => {
+                                  const label = `${o.name} (${o.branchType}), ${o.district}, ${o.state}`
+                                  return (
+                                    <option key={`${o.name}-${idx}`} value={label}>
+                                      {label}
+                                    </option>
+                                  )
+                                })}
+                              </select>
+                            )}
+                            <p className="text-xs text-gray-500">Pickup is typically ready same day during 8 AM – 11 PM.</p>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
 
                   <Button
                     className="w-full bg-orange-600 hover:bg-orange-700 text-white h-12"
                     onClick={handlePincodeSubmit}
-                    disabled={!pincodeValid}
+                    disabled={!pincodeValid || (!fulfillmentMode || (fulfillmentMode === "delivery" && !deliverySpeed) || (fulfillmentMode === "pickup" && !pickupSelection))}
                   >
-                    Continue to Checkout
+                    Continue
                   </Button>
                 </div>
 
@@ -448,47 +613,72 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
             </div>
 
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900">Delivery Address</h3>
+              <h3 className="text-lg font-semibold text-gray-900">{fulfillmentMode === 'pickup' ? 'Pickup Details' : 'Delivery Address'}</h3>
 
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium text-gray-700 flex items-center">
-                        <Home className="h-4 w-4 mr-2" />
-                        Full Address *
-                      </label>
-                      <Textarea
-                        placeholder="House/Flat No., Building Name, Street, Locality"
-                        value={customerDetails.address}
-                        onChange={(e) => handleDetailsChange("address", e.target.value)}
-                        className="min-h-[80px]"
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium text-gray-700">City *</label>
-                        <Input
-                          type="text"
-                          placeholder="Enter city"
-                          value={customerDetails.city}
-                          onChange={(e) => handleDetailsChange("city", e.target.value)}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium text-gray-700">State *</label>
-                        <Input
-                          type="text"
-                          placeholder="Enter state"
-                          value={customerDetails.state}
-                          onChange={(e) => handleDetailsChange("state", e.target.value)}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
+              {fulfillmentMode === 'pickup' ? (
+                <div className="space-y-3">
+                  <div className="space-y-1">
+                    <label className="text-sm font-medium text-gray-700 flex items-center">
+                      <Home className="h-4 w-4 mr-2" />
+                      Selected Pickup Location
+                    </label>
+                    <Input type="text" value={pickupSelection || 'Not selected'} disabled className="bg-gray-100" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1">
                       <label className="text-sm font-medium text-gray-700">Pincode</label>
                       <Input type="text" value={customerDetails.pincode} disabled className="bg-gray-100" />
                     </div>
+                    <div className="space-y-1">
+                      <label className="text-sm font-medium text-gray-700">Method</label>
+                      <Input type="text" value={deliverySpeed === 'instant' ? 'Pickup (instant readiness)' : 'Pickup'} disabled className="bg-gray-100" />
+                    </div>
                   </div>
+                  <p className="text-xs text-gray-500">Pickup assistance available 8 AM – 11 PM.</p>
+                </div>
+              ) : (
+                <>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-700 flex items-center">
+                      <Home className="h-4 w-4 mr-2" />
+                      Full Address *
+                    </label>
+                    <Textarea
+                      placeholder="House/Flat No., Building Name, Street, Locality"
+                      value={customerDetails.address}
+                      onChange={(e) => handleDetailsChange("address", e.target.value)}
+                      className="min-h-[80px]"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-gray-700">City *</label>
+                      <Input
+                        type="text"
+                        placeholder="Enter city"
+                        value={customerDetails.city}
+                        onChange={(e) => handleDetailsChange("city", e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-gray-700">State *</label>
+                      <Input
+                        type="text"
+                        placeholder="Enter state"
+                        value={customerDetails.state}
+                        onChange={(e) => handleDetailsChange("state", e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-700">Pincode</label>
+                    <Input type="text" value={customerDetails.pincode} disabled className="bg-gray-100" />
+                  </div>
+                </>
+              )}
+            </div>
                 </div>
 
                 {/* Order Summary */}

@@ -32,7 +32,7 @@ function rupee(n?: number) {
 export default async function ProductsPage() {
   let products: any[] = []
   try {
-    const [rows]: any = await db.query("SELECT * FROM products ORDER BY created_at DESC")
+    const [rows]: any = await db.query("SELECT * FROM products WHERE in_stock = 1 ORDER BY created_at DESC")
     products = Array.isArray(rows) ? rows : []
   } catch {
     products = []
@@ -101,4 +101,3 @@ export default async function ProductsPage() {
     </main>
   )
 }
-

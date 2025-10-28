@@ -11,6 +11,19 @@ export default function ProductsManager() {
   const [loading, setLoading] = useState(false)
   const [form, setForm] = useState({ name: "", price: "", original_price: "", image_url: "", category: "", size: "", description: "" })
   const [creating, setCreating] = useState(false)
+  const [uploading, setUploading] = useState(false)
+  const [rowEdits, setRowEdits] = useState<Record<number, Partial<Product>>>({})
+
+  // FASTag class and vehicle mappings
+  const CLASS_OPTIONS = ["Class 4", "Class 5", "Class 6", "Class 7", "Class 12"]
+  const VEHICLE_BY_CLASS: Record<string, string[]> = {
+    "Class 4": ["Car/Jeep/Van"],
+    "Class 5": ["LCV"],
+    "Class 6": ["Bus (2-axle)", "Truck (2-axle)"],
+    "Class 7": ["Bus (3-axle)", "Truck (3-axle)"],
+    "Class 12": ["Truck (Multi-axle)", "Heavy Vehicle"],
+  }
+  const vehiclesFor = (cls?: string) => VEHICLE_BY_CLASS[cls || ""] || []
 
   const load = async () => {
     setLoading(true)
@@ -47,6 +60,29 @@ export default function ProductsManager() {
     } catch (e) { alert(String(e)) } finally { setCreating(false) }
   }
 
+  const uploadNewImage = async (file: File) => {
+    if (!form.name.trim()) {
+      alert("Please enter product Name first");
+      return;
+    }
+    setUploading(true)
+    try {
+      const fd = new FormData()
+      fd.append("type", "image")
+      fd.append("productName", form.name.trim())
+      fd.append("files", file)
+      const r = await fetch("/api/upload", { method: "POST", body: fd })
+      const j = await r.json()
+      if (!r.ok) throw new Error(j?.error || "Upload failed")
+      const url = j?.urls?.[0]
+      if (url) setForm({ ...form, image_url: url })
+    } catch (e) {
+      alert(String(e))
+    } finally {
+      setUploading(false)
+    }
+  }
+
   const uploadImage = async (id: number, file: File) => {
     const form = new FormData()
     form.append("productId", String(id))
@@ -66,6 +102,25 @@ export default function ProductsManager() {
     await load()
   }
 
+  const setEdit = (id: number, key: string, value: any) => {
+    setRowEdits((prev) => ({ ...prev, [id]: { ...(prev[id] || {}), [key]: value } }))
+  }
+
+  const saveRow = async (p: any) => {
+    const patch = rowEdits[p.id] || {}
+    const entries = Object.entries(patch)
+    if (entries.length === 0) return
+    for (const [k, v] of entries) {
+      await fetch("/api/products", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: p.id, [k]: v }) })
+    }
+    setRowEdits((prev) => { const n = { ...prev }; delete n[p.id]; return n })
+    await load()
+  }
+
+  const resetRow = (id: number) => {
+    setRowEdits((prev) => { const n = { ...prev }; delete n[id]; return n })
+  }
+
   return (
     <div className="space-y-6">
       <div className="rounded-lg border border-orange-900 p-4 bg-neutral-900">
@@ -74,9 +129,36 @@ export default function ProductsManager() {
           <Input placeholder="Name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
           <Input placeholder="Price" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} />
           <Input placeholder="Original Price" value={form.original_price} onChange={(e) => setForm({ ...form, original_price: e.target.value })} />
-          <Input placeholder="Category" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} />
-          <Input placeholder="Size" value={form.size} onChange={(e) => setForm({ ...form, size: e.target.value })} />
-          <Input placeholder="Image URL (optional)" value={form.image_url} onChange={(e) => setForm({ ...form, image_url: e.target.value })} />
+          <select
+            className="h-10 rounded-md border border-orange-900 bg-neutral-900 px-3 text-gray-200"
+            value={form.category}
+            onChange={(e) => {
+              const cls = e.target.value
+              const v = vehiclesFor(cls)[0] || ""
+              setForm({ ...form, category: cls, size: v })
+            }}
+          >
+            <option value="">Select Class</option>
+            {CLASS_OPTIONS.map((c) => (
+              <option key={c} value={c}>{c}</option>
+            ))}
+          </select>
+          <select
+            className="h-10 rounded-md border border-orange-900 bg-neutral-900 px-3 text-gray-200"
+            value={form.size}
+            onChange={(e) => setForm({ ...form, size: e.target.value })}
+          >
+            <option value="">Select Vehicle</option>
+            {vehiclesFor(form.category).map((v) => (
+              <option key={v} value={v}>{v}</option>
+            ))}
+          </select>
+          <div className="flex gap-2">
+            <Input className="flex-1" placeholder="Image URL (optional)" value={form.image_url} onChange={(e) => setForm({ ...form, image_url: e.target.value })} />
+            <Button type="button" variant="outline" disabled={uploading || !form.name.trim()} onClick={() => { const f = document.createElement('input'); f.type = 'file'; f.accept = 'image/*'; f.onchange = (ev: any) => ev.target.files?.[0] && uploadNewImage(ev.target.files[0]); f.click(); }}>
+              {uploading ? 'Uploading…' : 'Upload'}
+            </Button>
+          </div>
           <Input placeholder="Short Description" className="md:col-span-3" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
         </div>
         <div className="mt-3 flex justify-end">
@@ -88,42 +170,79 @@ export default function ProductsManager() {
         <Table className="text-gray-200">
           <TableHeader>
             <TableRow className="bg-black/40">
-              <TableHead className="text-gray-400">ID</TableHead>
-              <TableHead className="text-gray-400">Image</TableHead>
-              <TableHead className="text-gray-400">Name</TableHead>
-              <TableHead className="text-gray-400">Price</TableHead>
-              <TableHead className="text-gray-400">Category</TableHead>
-              <TableHead className="text-gray-400">Actions</TableHead>
+              <TableHead className="text-gray-400 w-12">ID</TableHead>
+              <TableHead className="text-gray-400 w-20">Image</TableHead>
+              <TableHead className="text-gray-400 w-56">Name</TableHead>
+              <TableHead className="text-gray-400 w-32">Price</TableHead>
+              <TableHead className="text-gray-400 w-40">Class</TableHead>
+              <TableHead className="text-gray-400 w-40">Vehicle</TableHead>
+              <TableHead className="text-gray-400 w-24 text-center">Active</TableHead>
+              <TableHead className="text-gray-400 w-32 text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {loading ? (
-              <TableRow><TableCell colSpan={6} className="text-gray-400">Loading…</TableCell></TableRow>
+              <TableRow><TableCell colSpan={8} className="text-gray-400">Loading…</TableCell></TableRow>
             ) : list.length === 0 ? (
-              <TableRow><TableCell colSpan={6} className="text-gray-400">No products.</TableCell></TableRow>
+              <TableRow><TableCell colSpan={8} className="text-gray-400">No products.</TableCell></TableRow>
             ) : (
               list.map((p) => (
                 <TableRow key={p.id}>
-                  <TableCell className="text-gray-300">{p.id}</TableCell>
-                  <TableCell className="text-gray-300">
+                  <TableCell className="text-gray-300 align-middle">{p.id}</TableCell>
+                  <TableCell className="text-gray-300 align-middle">
                     {p.image_url ? (
                       <img src={normalizeDriveUrl(p.image_url)} alt="img" className="h-12 w-12 object-cover rounded" />
                     ) : (
                       <input type="file" accept="image/*" onChange={(e) => e.target.files?.[0] && uploadImage(p.id, e.target.files![0])} />
                     )}
                   </TableCell>
-                  <TableCell className="text-gray-300">
-                    <Input defaultValue={p.name} onBlur={(e) => updateField(p.id, "name", e.target.value)} />
+                  <TableCell className="text-gray-300 align-middle">
+                    <Input className="h-9 w-64" defaultValue={p.name} onBlur={(e) => updateField(p.id, 'name', e.target.value)} />
                   </TableCell>
-                  <TableCell className="text-gray-300">
-                    <Input defaultValue={p.price} onBlur={(e) => updateField(p.id, "price", e.target.value)} />
+                  <TableCell className="text-gray-300 align-middle">
+                    <Input className="h-9 w-36" defaultValue={p.price} onBlur={(e) => updateField(p.id, 'price', e.target.value)} />
                   </TableCell>
-                  <TableCell className="text-gray-300">
-                    <Input defaultValue={p.category} onBlur={(e) => updateField(p.id, "category", e.target.value)} />
+                  <TableCell className="text-gray-300 align-middle">
+                    <select
+                      className="h-9 rounded-md border border-orange-900 bg-neutral-900 px-2 text-gray-200 w-40"
+                      defaultValue={p.category || ''}
+                      onChange={(e) => {
+                        const cls = e.target.value
+                        const v = vehiclesFor(cls)[0] || ''
+                        updateField(p.id, 'category', cls)
+                        updateField(p.id, 'size', v)
+                      }}
+                    >
+                      <option value="">Select Class</option>
+                      {CLASS_OPTIONS.map((c) => (
+                        <option key={c} value={c}>{c}</option>
+                      ))}
+                    </select>
                   </TableCell>
-                  <TableCell className="text-gray-300">
-                    <Button variant="outline" className="border-orange-700 text-orange-400 hover:bg-orange-900/30 mr-2" onClick={() => { const f = document.createElement('input'); f.type = 'file'; f.accept = 'image/*'; f.onchange = (ev: any) => ev.target.files?.[0] && uploadImage(p.id, ev.target.files[0]); f.click() }}>Upload Image</Button>
-                    <Button variant="outline" className="border-red-700 text-red-400 hover:bg-red-900/30" onClick={async () => { await fetch('/api/products', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: p.id }) }); await load() }}>Delete</Button>
+                  <TableCell className="text-gray-300 align-middle">
+                    <select
+                      className="h-9 rounded-md border border-orange-900 bg-neutral-900 px-2 text-gray-200 w-40"
+                      defaultValue={p.size || ''}
+                      onChange={(e) => updateField(p.id, 'size', e.target.value)}
+                    >
+                      <option value="">Select Vehicle</option>
+                      {vehiclesFor(p.category).map((v) => (
+                        <option key={v} value={v}>{v}</option>
+                      ))}
+                    </select>
+                  </TableCell>
+                  <TableCell className="text-gray-300 text-center align-middle">
+                    <select
+                      defaultValue={String(Number(p.in_stock) === 1 ? 1 : 0)}
+                      onChange={(e) => updateField(p.id, 'in_stock', e.target.value === '1' ? 1 : 0)}
+                      className="bg-neutral-800 border border-orange-900 rounded px-2 py-1"
+                    >
+                      <option value="1">Yes</option>
+                      <option value="0">No</option>
+                    </select>
+                  </TableCell>
+                  <TableCell className="text-gray-300 align-middle text-right">
+                    <Button size="sm" variant="outline" className="border-red-700 text-red-400 hover:bg-red-900/30" onClick={async () => { await fetch('/api/products', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: p.id }) }); await load() }}>Delete</Button>
                   </TableCell>
                 </TableRow>
               ))

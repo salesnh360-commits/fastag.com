@@ -72,10 +72,10 @@ export default function ResizableNavbar({
         {nested && (
           <div className="pointer-events-none absolute left-[-5px] top-3 h-2 w-2 rotate-45 bg-white border-b border-r border-gray-200" />
         )}
-        {items.map((c) => {
+        {items.map((c, idx) => {
           const hasKids = (c.children || []).length > 0
           return (
-            <div key={c.href} className="relative group/item">
+            <div key={`${c.href}-${idx}`} className="relative group/item">
               <Link
                 href={c.href}
                 target={c.target}
@@ -113,7 +113,7 @@ export default function ResizableNavbar({
         style={{ left: indicator.left, width: indicator.width, opacity: indicator.opacity }}
       />
       {items.map((item, i) => (
-        <div key={item.href} className="relative group" onMouseEnter={() => moveTo(i)} onFocus={() => moveTo(i)}>
+        <div key={`${item.href}-${i}`} className="relative group" onMouseEnter={() => moveTo(i)} onFocus={() => moveTo(i)}>
           <Link
             href={item.href}
             ref={(el) => { itemRefs.current[i] = el }}

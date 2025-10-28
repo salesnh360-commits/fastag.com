@@ -14,10 +14,10 @@ function slugify(input: string) {
 
 export async function GET(
   _req: Request,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const slug = params.slug
+    const { slug } = await params
     // Try to ensure newer columns exist; ignore if they already exist
     try { await db.query("ALTER TABLE blogs ADD COLUMN image_url VARCHAR(1024) NULL") } catch {}
     try { await db.query("ALTER TABLE blogs ADD COLUMN doc_url VARCHAR(1024) NULL") } catch {}
@@ -55,10 +55,10 @@ export async function GET(
 
 export async function DELETE(
   _req: NextRequest,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const slug = params.slug
+    const { slug } = await params
     const [result] = await db.query("DELETE FROM blogs WHERE slug = ?", [slug])
     // @ts-ignore
     const affected = result?.affectedRows ?? 0
@@ -74,10 +74,10 @@ export async function DELETE(
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const currentSlug = params.slug
+    const { slug: currentSlug } = await params
     const body = await req.json()
     const { title, excerpt, content, author, image_url, doc_url, youtube_url } = body || {}
 

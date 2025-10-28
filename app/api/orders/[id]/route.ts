@@ -3,9 +3,10 @@ import { db } from "@/lib/db"
 
 export const runtime = "nodejs"
 
-export async function GET(_req: Request, { params }: { params: { id: string } }) {
+export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const id = Number(params.id)
+    const { id: idStr } = await params
+    const id = Number(idStr)
     if (!id || Number.isNaN(id)) return NextResponse.json({ error: "invalid id" }, { status: 400 })
 
     await db.query(`
