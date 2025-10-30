@@ -7,6 +7,7 @@ import { CartProvider } from "@/components/cart-context"
 import SiteChrome from "@/components/site-chrome"
 import Analytics from "@/components/analytics"
 import ConsentBanner from "@/components/consent-banner"
+import WhatsAppButton from "@/components/WhatsAppButton"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -97,6 +98,8 @@ export default function RootLayout({
         <Suspense fallback={null}>
           <Analytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
         </Suspense>
+        {/* WhatsApp Floating Button (shows when NEXT_PUBLIC_WHATSAPP_NUMBER is set) */}
+        <WhatsAppButton />
       </body>
     </html>
   )

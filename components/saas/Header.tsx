@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -28,6 +28,7 @@ export default function SaasHeader() {
       ],
     },
     { href: "/products", label: "Products" },
+    { href: "/locations", label: "Locations" },
     { href: "/#blog", label: "Blog" },
     { href: "/contact", label: "Contact Us" },
   ]
@@ -171,7 +172,7 @@ export default function SaasHeader() {
                         {n.label}
                       </Link>
                       <span className="ml-2 text-gray-500 group-open:rotate-180 transition-transform" aria-hidden>
-                        ▼
+                        ?
                       </span>
                     </summary>
                     <div className="pl-4 pb-2 flex flex-col gap-1">
@@ -246,3 +247,5 @@ export default function SaasHeader() {
     </header>
   )
 }
+
+
