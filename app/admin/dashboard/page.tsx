@@ -9,6 +9,7 @@ import NewBlogForm from "./_new-blog-form"
 import AdminBlogsList from "@/components/admin/blogs-list"
 import AdminOrdersTable from "@/components/admin/orders-table"
 import ProductsManager from "@/components/admin/products-manager"
+import ShopsManager from "@/components/admin/shops-manager"
 import BannersManager from "@/components/admin/banners-manager"
 import MenusManager from "@/components/admin/menus-manager"
 
@@ -143,6 +144,7 @@ export default async function AdminDashboard() {
                   <TabsTrigger value="recharge">Recharge</TabsTrigger>
                   <TabsTrigger value="orders">Orders</TabsTrigger>
                   <TabsTrigger value="products">Products</TabsTrigger>
+                  <TabsTrigger value="shops">Shops</TabsTrigger>
                   <TabsTrigger value="banners">Banners</TabsTrigger>
                   <TabsTrigger value="menus">Menus</TabsTrigger>
                   <TabsTrigger value="leads">Leads</TabsTrigger>
@@ -177,6 +179,11 @@ export default async function AdminDashboard() {
                 {/* Products */}
                 <TabsContent value="products">
                   <ProductsManager />
+                </TabsContent>
+
+                {/* Shops */}
+                <TabsContent value="shops">
+                  <ShopsManager />
                 </TabsContent>
 
                 {/* Banners */}

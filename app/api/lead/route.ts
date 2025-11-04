@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import nodemailer from "nodemailer"
 import { db } from "@/lib/db"
+import { sendLeadToErp } from "@/lib/erp"
 
 export const runtime = "nodejs"
 
@@ -93,7 +94,24 @@ export async function POST(req: NextRequest) {
       console.warn("lead: tickets api failed", e)
     }
 
-    // 3) Email notification (optional)
+    // 3) Forward to ERP (optional)
+    let erpResult: any = null
+    try {
+      const erp = await sendLeadToErp({
+        name,
+        phone: phoneNormalized,
+        place: place ?? null,
+        vehicleRegNo: vehicleRegNo ?? null,
+        product: product ?? null,
+        notes: notes ?? null,
+      })
+      erpResult = erp
+    } catch (e) {
+      console.warn("lead: erp forward failed", e)
+      erpResult = { error: true }
+    }
+
+    // 4) Email notification (optional)
     try {
       const {
         SMTP_HOST,
@@ -146,7 +164,7 @@ export async function POST(req: NextRequest) {
       console.warn("lead: email send failed", mailErr)
     }
 
-    // 4) WhatsApp notification (optional: Meta Cloud API or Twilio)
+    // 5) WhatsApp notification (optional: Meta Cloud API or Twilio)
     try {
       const env = process.env as Record<string, string | undefined>
       const provider = (env.WHATSAPP_PROVIDER || "meta").toLowerCase() // "meta" or "twilio"
@@ -246,6 +264,8 @@ export async function POST(req: NextRequest) {
       success: true,
       forwardedToTickets: ticketResponse && ticketResponse.error !== true,
       ticket: ticketResponse && ticketResponse.error !== true ? ticketResponse : null,
+      forwardedToErp: erpResult && !erpResult.error && !erpResult.skipped ? true : false,
+      erp: erpResult && !erpResult.error ? erpResult : null,
       ticketsDebug: ticketResponse && ticketResponse.error === true
         ? {
             url: (process.env.TICKETS_API_URL || "https://nh360-self.vercel.app/api/tickets").replace(/\/+$/, ""),

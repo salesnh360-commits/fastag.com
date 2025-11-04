@@ -7,8 +7,11 @@
   state: string
   postalCode: string
   phone: string
-  gbpUrl?: string
-  neighborhoods?: string[]
+	  gbpUrl?: string
+	  neighborhoods?: string[]
+	  // Geographic coordinates for distance calculations
+	  lat?: number
+	  lng?: number
 }
 
 export const branches: Branch[] = [
@@ -18,9 +21,12 @@ export const branches: Branch[] = [
     addressLine1: "410A, First Floor, Thadagam Main Road, junction, Edayarpalayam",
     city: "Coimbatore",
     state: "Tamil Nadu",
-    postalCode: "641025",
-    phone: "094885 00360",
-    gbpUrl:
+	    postalCode: "641025",
+	    phone: "094885 00360",
+	    // Approximate coordinates near Edayarpalayam, Coimbatore
+	    lat: 11.04984,
+	    lng: 76.918862,
+	    gbpUrl:
       "https://www.google.com/search?q=KOVAI+FASTAG+%26+GPS+SERVICE&stick=H4sIAAAAAAAA_-NgU1I1qDBOSrQwtTRNSTVLTLYwMU6yMqhIsTBLNLc0NE4xM0gytDAzXMQq5e0f5uip4OYYHOLorqCm4B4QrBDsGhTm6ewKAO0qhFtGAAAA&hl=en&mat=CWopZ4lsa_MlElYBTVDHnrtw7lZASKYphq3vsPZsclCq3rn1c6Do5eloXE5in5ct3bUXKhb_UankCEkQ3gxItEhM2tghaBczGRf9X4nDkT0Y7UhR4wuUx0JBA2Y3UlncTw&authuser=0",
     neighborhoods: ["Edayarpalayam", "Thadagam Road", "Gandhipuram", "RS Puram"],
   },
@@ -30,9 +36,12 @@ export const branches: Branch[] = [
     addressLine1: "144/1, Raja St, Ganapathy",
     city: "Coimbatore",
     state: "Tamil Nadu",
-    postalCode: "641006",
-    phone: "+91 86674 60635",
-    gbpUrl:
+	    postalCode: "641006",
+	    phone: "+91 86674 60635",
+	    // Approximate coordinates for Ganapathy, Coimbatore
+	    lat: 11.0365596,
+	    lng: 76.9692573,
+	    gbpUrl:
       "https://www.google.com/search?q=Ganapathy+Fastag+%26+GPS+Service&stick=H4sIAAAAAAAA_-NgU1I1qDBOSrQwtTQ0sjAzMTVMSbS0MqiwTDEyN01MNUlLNjNPMTYyWcQq556Yl1iQWJJRqeCWWFySmK6gpuAeEKwQnFpUlpmcCgAdTooUSgAAAA&hl=en&mat=CS5imygxH9JVElcBTVDHnkwqa0bAYMWwX3aMjaqJnlS_vj1o7LqXaKdlPFirntTdgRoq_Zw4qMjxU8UJKgsuSvf6P5Tt7NTZ-IJj3QFeFdWfaYBhaLzUrS3i0TYfSKL9ZwQ&authuser=0",
     neighborhoods: ["Ganapathy", "Peelamedu", "Gandhipuram", "Saibaba Colony"],
   },

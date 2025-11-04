@@ -1,6 +1,7 @@
 // app/api/orders/route.ts
 import { NextRequest, NextResponse } from "next/server"
 import { db } from "@/lib/db"
+import { sendOrderToErp, sendOrderUpdateToErp } from "@/lib/erp"
 import { Shiprocket } from "@/lib/shiprocket"
 
 export async function GET() {
@@ -138,6 +139,27 @@ export async function PATCH(req: Request) {
       console.warn('shiprocket auto-create failed', e)
     }
 
+    try {
+      const [rows] = await db.query("SELECT * FROM orders WHERE id = ? LIMIT 1", [id])
+      const o = (rows as any[])?.[0]
+      if (o) {
+        await sendOrderUpdateToErp({
+          id,
+          orderId: o.orderId,
+          newStatus: typeof newStatus === 'string' ? newStatus : undefined,
+          provider: typeof provider === 'string' ? String(provider).toLowerCase() : undefined,
+          shipping: created ? {
+            shipment_id: created?.shipment_id || created?.data?.shipment_id || null,
+            awb: created?.awb_code || created?.data?.awb_code || null,
+            tracking_url: created?.tracking_url || created?.data?.tracking_url || (created?.awb_code ? `https://shiprocket.co/tracking/${created?.awb_code}` : null),
+            courier: created?.courier_company || created?.data?.courier_company || null,
+          } : undefined,
+        })
+      }
+    } catch (e) {
+      console.warn('erp order update failed', e)
+    }
+
     return NextResponse.json({ success: true, shiprocket: created ? { shipment_id: created?.shipment_id || created?.data?.shipment_id || null, awb: created?.awb_code || created?.data?.awb_code || null } : null, shiprocketError: shipErr })
   } catch (error) {
     console.error("Error updating order status:", error)
@@ -240,6 +262,25 @@ export async function POST(req: NextRequest) {
           console.warn('order create: document save failed', e)
         }
       }
+    }
+
+    try {
+      await sendOrderToErp({
+        orderId,
+        customerName,
+        customerEmail,
+        phone,
+        address,
+        city,
+        state,
+        pincode,
+        totalAmount,
+        paymentMethod: body.paymentMethod || 'Prepaid',
+        items,
+        docs,
+      })
+    } catch (e) {
+      console.warn('erp order create failed', e)
     }
 
     return NextResponse.json({ success: true, id })

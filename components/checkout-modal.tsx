@@ -125,7 +125,8 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
       try {
         setPickupLoading(true)
         setPickupError("")
-        const res = await fetch(`/api/pincode/${pincode}`)
+        // Fetch pickup points within 5 km of entered pincode
+        const res = await fetch(`/api/pincode/${pincode}?pickup=1&radiusKm=5`)
         if (!res.ok) throw new Error("Failed to fetch nearby locations")
         const data = await res.json()
         const offices = Array.isArray(data?.offices) ? data.offices : []
