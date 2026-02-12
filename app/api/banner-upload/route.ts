@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { uploadBufferToDrive, ensureFolder } from "@/lib/googleDrive"
+import { uploadToCloudinary } from "@/lib/cloudinary"
 import { isAdmin } from "@/lib/api-auth"
 
 export const runtime = "nodejs"
@@ -15,17 +15,16 @@ export async function POST(req: NextRequest) {
     const ext = (file.name.split(".").pop() || "bin").toLowerCase()
     const name = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
 
-    // Ensure 'Banner' folder exists and upload
-    const folderName = "Banner"
-    await ensureFolder(folderName)
-    const { url } = await uploadBufferToDrive({
+    // Upload to Cloudinary in 'banners' folder
+    const result = await uploadToCloudinary({
       buffer: buf,
       filename: name,
-      mimeType: file.type || undefined,
-      folderName,
+      folder: "banners",
     })
-    return NextResponse.json({ url })
+
+    return NextResponse.json({ url: result.secureUrl })
   } catch (e: any) {
+    console.error("Banner upload error:", e)
     return NextResponse.json({ error: e?.message || "upload failed" }, { status: 500 })
   }
 }

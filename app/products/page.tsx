@@ -10,14 +10,24 @@ export const metadata: Metadata = {
   description: "Browse all available FASTag products and services.",
 }
 
+// Enable ISR - revalidate every 30 minutes
+export const revalidate = 1800
+
 function normalizeDrive(url?: string) {
   if (!url) return "/placeholder.svg"
   try {
+    // Handle direct Google Drive links
     const u = new URL(url)
     if (u.host.includes("drive.google.com") || u.host.includes("drive.usercontent.google.com")) {
-      const m = u.pathname.match(/\/file\/d\/([^/]+)/)
-      const fid = (m && m[1]) || u.searchParams.get("id") || ""
-      if (fid) return `https://lh3.googleusercontent.com/d/${fid}=s1200`
+      // Extract file ID from various Google Drive URL formats
+      const fileIdMatch = u.pathname.match(/\/file\/d\/([^/]+)/) ||
+        u.pathname.match(/\/d\/([^/]+)/) ||
+        u.searchParams.get("id")
+      const fid = Array.isArray(fileIdMatch) ? fileIdMatch[1] : fileIdMatch
+      if (fid) {
+        // Use direct Google Drive thumbnail/preview URL
+        return `https://drive.google.com/thumbnail?id=${fid}&sz=w1000`
+      }
     }
     return url
   } catch {

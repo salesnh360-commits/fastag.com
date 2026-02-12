@@ -80,26 +80,68 @@ export async function PUT(req: Request) {
   try {
     await ensureProductsTable()
     const body = await req.json();
-    const {
-      id, name, price, original_price, image_url, description, rating, reviews, category, size,
-      features, warranty, specifications, detailed_description, benefits, technology,
-      certifications, suitable_for, care_instructions, why_choose, in_stock
-    } = body;
+    const { id, ...updates } = body;
+
     if (!id) return NextResponse.json({ error: "Missing product id" }, { status: 400 });
 
-    await db.query(
-      `UPDATE products SET
-        name=?, price=?, original_price=?, image_url=?, description=?, rating=?, reviews=?, category=?, size=?,
-        features=?, warranty=?, specifications=?, detailed_description=?, benefits=?, technology=?,
-        certifications=?, suitable_for=?, care_instructions=?, why_choose=?, in_stock=?
-      WHERE id=?`,
-      [
-        name, price, original_price, image_url, description, rating, reviews, category, size,
-        JSON.stringify(features), warranty, JSON.stringify(specifications), detailed_description,
-        JSON.stringify(benefits), JSON.stringify(technology), JSON.stringify(certifications),
-        JSON.stringify(suitable_for), JSON.stringify(care_instructions), JSON.stringify(why_choose), in_stock, id
-      ]
-    );
+    // Build dynamic UPDATE query with only provided fields
+    const fields: string[] = [];
+    const values: any[] = [];
+
+    // Map of field names to their values
+    const fieldMap: Record<string, any> = {
+      name: updates.name,
+      price: updates.price,
+      original_price: updates.original_price,
+      image_url: updates.image_url,
+      description: updates.description,
+      rating: updates.rating,
+      reviews: updates.reviews,
+      category: updates.category,
+      size: updates.size,
+      features: updates.features,
+      warranty: updates.warranty,
+      specifications: updates.specifications,
+      detailed_description: updates.detailed_description,
+      benefits: updates.benefits,
+      technology: updates.technology,
+      certifications: updates.certifications,
+      suitable_for: updates.suitable_for,
+      care_instructions: updates.care_instructions,
+      why_choose: updates.why_choose,
+      in_stock: updates.in_stock,
+    };
+
+    // JSON fields that need stringification
+    const jsonFields = new Set([
+      'features', 'specifications', 'benefits', 'technology',
+      'certifications', 'suitable_for', 'care_instructions', 'why_choose'
+    ]);
+
+    // Only include fields that are actually provided
+    for (const [field, value] of Object.entries(fieldMap)) {
+      if (value !== undefined) {
+        fields.push(`${field}=?`);
+        // Stringify JSON fields
+        if (jsonFields.has(field) && value !== null) {
+          values.push(JSON.stringify(value));
+        } else {
+          values.push(value);
+        }
+      }
+    }
+
+    if (fields.length === 0) {
+      return NextResponse.json({ error: "No fields to update" }, { status: 400 });
+    }
+
+    // Add id as the last parameter for WHERE clause
+    values.push(id);
+
+    const query = `UPDATE products SET ${fields.join(', ')} WHERE id=?`;
+
+    await db.query(query, values);
+
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Error updating product:", error);

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { uploadBufferToDrive, ensureFolder } from '@/lib/googleDrive'
+import { uploadToCloudinary } from '@/lib/cloudinary'
 import { db } from '@/lib/db'
 
 export const config = { api: { bodyParser: false } }
@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
   const productName = (formData.get('productName') as string | null) || null
   const type = formData.get('type') as 'image' | 'video' | null
 
-  if ((!productId && !productName) || !type) {
+  if ((!productId && !productName) && !type) {
     return NextResponse.json({ error: 'Missing productId/productName or type' }, { status: 400 })
   }
 
@@ -29,31 +29,35 @@ export async function POST(req: NextRequest) {
       const [rows] = await db.query('SELECT name FROM products WHERE id = ? LIMIT 1', [productId])
       const arr = rows as Array<{ name?: string }>
       if (arr?.[0]?.name) folderName = String(arr[0].name)
-    } catch {}
+    } catch { }
   }
   folderName = String(folderName).replace(/[\\/:*?"<>|]/g, '-').trim() || 'Product'
 
-  // Ensure nested folders: Ecomerece / Products / <Product Name>
-  const ecomRootId = await ensureFolder('Ecomerece')
-  const productsFolderId = await ensureFolder('Products', ecomRootId)
-  await ensureFolder(folderName, productsFolderId)
-
   const urls: string[] = []
-  for (const file of files) {
-    const buffer = Buffer.from(await file.arrayBuffer())
-    const ext = (file.name.split('.').pop() || 'bin').toLowerCase()
-    const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
 
-    const { url } = await uploadBufferToDrive({
-      buffer,
-      filename,
-      mimeType: (file as any).type || undefined,
-      folderName,
-      parentId: productsFolderId,
-    })
-    urls.push(url)
+  try {
+    for (const file of files) {
+      const buffer = Buffer.from(await file.arrayBuffer())
+      const ext = (file.name.split('.').pop() || 'bin').toLowerCase()
+      const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
+
+      // Upload to Cloudinary
+      const result = await uploadToCloudinary({
+        buffer,
+        filename,
+        folder: `products/${folderName}`,
+      })
+
+      // Use secure URL (HTTPS)
+      urls.push(result.secureUrl)
+    }
+
+    return NextResponse.json({ urls })
+  } catch (error) {
+    console.error('Upload error:', error)
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : 'Upload failed' },
+      { status: 500 }
+    )
   }
-
-  return NextResponse.json({ urls })
 }
-

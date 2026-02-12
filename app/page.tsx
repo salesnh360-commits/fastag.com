@@ -23,6 +23,9 @@ export const metadata: Metadata = {
     "Buy FASTag, recharge across issuers, update KYC, resolve blacklist and manage fleets with NH360 FASTag.",
 }
 
+// Enable ISR - revalidate every hour
+export const revalidate = 3600
+
 export default function HomePage() {
   return (
     <main className="min-h-screen bg-white text-gray-900">
@@ -163,12 +166,12 @@ export default function HomePage() {
           {/* Available products are also linked in the footer */}
           {/* to help discoverability via filters. */}
           {/* eslint-disable-next-line react/jsx-no-undef */}
-          {}
+          { }
           {/**/}
           {DBProductsCarousel()}
         </div>
       </section>
-{/* Blog teasers */}
+      {/* Blog teasers */}
       <section id="blog" className="py-16">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between mb-6">
@@ -223,20 +226,20 @@ async function DBProductsCarousel() {
     const [rows] = await db.query("SELECT * FROM products ORDER BY created_at DESC LIMIT 24")
     const products = Array.isArray(rows)
       ? (rows as any[]).map((p: any) => ({
-          id: p.id,
-          name: p.name,
-          price: `₹${p.price ?? 0}`,
-          originalPrice: `₹${p.original_price ?? p.price ?? 0}`,
-          image: p.image_url || "/placeholder.svg",
-          description: p.description || "FASTag issuance with KYC and activation support",
-          rating: Number(p.rating ?? 4.7),
-          reviews: Number(p.reviews ?? 0),
-          category: p.category || "fastag",
-          features: Array.isArray(p.features) ? p.features : ["Same-day activation", "PAN-India"],
-        }))
+        id: p.id,
+        name: p.name,
+        price: `₹${p.price ?? 0}`,
+        originalPrice: `₹${p.original_price ?? p.price ?? 0}`,
+        image: p.image_url || "/placeholder.svg",
+        description: p.description || "FASTag issuance with KYC and activation support",
+        rating: Number(p.rating ?? 4.7),
+        reviews: Number(p.reviews ?? 0),
+        category: p.category || "fastag",
+        features: Array.isArray(p.features) ? p.features : ["Same-day activation", "PAN-India"],
+      }))
       : []
 
-  return (
+    return (
       <ProductCarousel
         title="FASTag Products"
         subtitle="Live catalogue"
