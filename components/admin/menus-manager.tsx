@@ -1,5 +1,5 @@
 "use client"
-import { useEffect, useMemo, useState } from "react"
+import { Fragment, useEffect, useMemo, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -51,7 +51,7 @@ export default function MenusManager() {
 
   const addItem = () => {
     if (!newItem.label || !newItem.href) return
-    const next: MenuItem = { ...newItem, sort_order: (items[items.length-1]?.sort_order ?? items.length) + 1, active: true }
+    const next: MenuItem = { ...newItem, sort_order: (items[items.length - 1]?.sort_order ?? items.length) + 1, active: true }
     setItems([...items, next])
     setNewItem({ label: "", href: "" })
   }
@@ -164,11 +164,11 @@ export default function MenusManager() {
         <div className="grid md:grid-cols-3 gap-3">
           <div className="flex items-center gap-2">
             <span className="text-gray-300 min-w-16">Slug</span>
-            <Input value={slug} onChange={(e)=> setSlug(e.target.value.trim())} onBlur={()=> load(slug)} />
+            <Input value={slug} onChange={(e) => setSlug(e.target.value.trim())} onBlur={() => load(slug)} />
           </div>
           <div className="flex items-center gap-2 md:col-span-2">
             <span className="text-gray-300 min-w-16">Name</span>
-            <Input value={menuName} onChange={(e)=> setMenuName(e.target.value)} />
+            <Input value={menuName} onChange={(e) => setMenuName(e.target.value)} />
           </div>
         </div>
       </div>
@@ -176,10 +176,10 @@ export default function MenusManager() {
       <div className="rounded-lg border border-orange-900 p-4 bg-neutral-900">
         <h3 className="text-white font-semibold mb-3">Add Item</h3>
         <div className="grid md:grid-cols-3 gap-3">
-          <Input placeholder="Label" value={newItem.label} onChange={(e)=> setNewItem({ ...newItem, label: e.target.value })} onKeyDown={handleNewItemKey} />
-          <Input placeholder="Href (e.g., /, /#buy)" value={newItem.href} onChange={(e)=> setNewItem({ ...newItem, href: e.target.value })} onKeyDown={handleNewItemKey} />
+          <Input placeholder="Label" value={newItem.label} onChange={(e) => setNewItem({ ...newItem, label: e.target.value })} onKeyDown={handleNewItemKey} />
+          <Input placeholder="Href (e.g., /, /#buy)" value={newItem.href} onChange={(e) => setNewItem({ ...newItem, href: e.target.value })} onKeyDown={handleNewItemKey} />
           <div className="flex gap-2">
-            <Input placeholder="Target (_blank)" value={newItem.target || ""} onChange={(e)=> setNewItem({ ...newItem, target: e.target.value || null })} onKeyDown={handleNewItemKey} />
+            <Input placeholder="Target (_blank)" value={newItem.target || ""} onChange={(e) => setNewItem({ ...newItem, target: e.target.value || null })} onKeyDown={handleNewItemKey} />
             <Button className="bg-orange-600 hover:bg-orange-700 text-white" onClick={addItem}>Add</Button>
           </div>
         </div>
@@ -204,123 +204,123 @@ export default function MenusManager() {
               <TableRow><TableCell colSpan={6} className="text-gray-400">No items.</TableCell></TableRow>
             ) : (
               sorted.map((it, idx) => (
-                <>
+                <Fragment key={`item-${idx}`}>
                   <TableRow key={`row-${idx}`}>
                     <TableCell className="text-gray-300">{idx + 1}</TableCell>
                     <TableCell className="text-gray-300">
-                      <Input defaultValue={it.label} onBlur={(e)=> setItems(prev => prev.map((p,i)=> i===idx? { ...p, label: e.target.value }: p))} />
+                      <Input defaultValue={it.label} onBlur={(e) => setItems(prev => prev.map((p, i) => i === idx ? { ...p, label: e.target.value } : p))} />
                     </TableCell>
                     <TableCell className="text-gray-300">
-                      <Input defaultValue={it.href} onBlur={(e)=> setItems(prev => prev.map((p,i)=> i===idx? { ...p, href: e.target.value }: p))} />
+                      <Input defaultValue={it.href} onBlur={(e) => setItems(prev => prev.map((p, i) => i === idx ? { ...p, href: e.target.value } : p))} />
                     </TableCell>
                     <TableCell className="text-gray-300">
-                      <Input defaultValue={it.target || ""} onBlur={(e)=> setItems(prev => prev.map((p,i)=> i===idx? { ...p, target: e.target.value || null }: p))} />
+                      <Input defaultValue={it.target || ""} onBlur={(e) => setItems(prev => prev.map((p, i) => i === idx ? { ...p, target: e.target.value || null } : p))} />
                     </TableCell>
                     <TableCell className="text-gray-300">
-                      <select defaultValue={String(it.active ? 1 : 0)} onChange={(e)=> setItems(prev => prev.map((p,i)=> i===idx? { ...p, active: e.target.value === "1" }: p))}
+                      <select defaultValue={String(it.active ? 1 : 0)} onChange={(e) => setItems(prev => prev.map((p, i) => i === idx ? { ...p, active: e.target.value === "1" } : p))}
                         className="bg-neutral-800 border border-orange-900 rounded px-2 py-1">
                         <option value="1">Yes</option>
                         <option value="0">No</option>
                       </select>
                     </TableCell>
                     <TableCell className="text-gray-300 flex gap-2">
-                      <Button variant="outline" className="border-orange-700 text-orange-400 hover:bg-orange-900/30" onClick={()=> move(idx, -1)}>Up</Button>
-                      <Button variant="outline" className="border-orange-700 text-orange-400 hover:bg-orange-900/30" onClick={()=> move(idx, 1)}>Down</Button>
-                      <Button variant="outline" className="border-green-700 text-green-400 hover:bg-green-900/30" onClick={()=> {
+                      <Button variant="outline" className="border-orange-700 text-orange-400 hover:bg-orange-900/30" onClick={() => move(idx, -1)}>Up</Button>
+                      <Button variant="outline" className="border-orange-700 text-orange-400 hover:bg-orange-900/30" onClick={() => move(idx, 1)}>Down</Button>
+                      <Button variant="outline" className="border-green-700 text-green-400 hover:bg-green-900/30" onClick={() => {
                         const label = prompt("Sub-item label?")?.trim() || ""
                         if (!label) return
                         const href = prompt("Sub-item href? (e.g., /path or /#section)")?.trim() || ""
                         if (!href) return
                         addSub(idx, { label, href })
                       }}>Add Sub</Button>
-                      <Button variant="outline" className="border-red-700 text-red-400 hover:bg-red-900/30" onClick={()=> remove(idx)}>Delete</Button>
+                      <Button variant="outline" className="border-red-700 text-red-400 hover:bg-red-900/30" onClick={() => remove(idx)}>Delete</Button>
                     </TableCell>
                   </TableRow>
                   {(it.children || []).map((ch, cidx) => (
-                    <>
+                    <Fragment key={`item-${idx}-child-${cidx}`}>
                       <TableRow key={`row-${idx}-child-${cidx}`}>
                         <TableCell className="text-gray-500 pl-8">{`${idx + 1}.${cidx + 1}`}</TableCell>
                         <TableCell className="text-gray-300">
-                          <Input defaultValue={ch.label} onBlur={(e)=> setItems(prev => prev.map((p,i)=> i===idx? { ...p, children: (p.children||[]).map((cc,ci)=> ci===cidx? { ...cc, label: e.target.value }: cc) }: p))} />
+                          <Input defaultValue={ch.label} onBlur={(e) => setItems(prev => prev.map((p, i) => i === idx ? { ...p, children: (p.children || []).map((cc, ci) => ci === cidx ? { ...cc, label: e.target.value } : cc) } : p))} />
                         </TableCell>
                         <TableCell className="text-gray-300">
-                          <Input defaultValue={ch.href} onBlur={(e)=> setItems(prev => prev.map((p,i)=> i===idx? { ...p, children: (p.children||[]).map((cc,ci)=> ci===cidx? { ...cc, href: e.target.value }: cc) }: p))} />
+                          <Input defaultValue={ch.href} onBlur={(e) => setItems(prev => prev.map((p, i) => i === idx ? { ...p, children: (p.children || []).map((cc, ci) => ci === cidx ? { ...cc, href: e.target.value } : cc) } : p))} />
                         </TableCell>
                         <TableCell className="text-gray-300">
-                          <Input defaultValue={ch.target || ""} onBlur={(e)=> setItems(prev => prev.map((p,i)=> i===idx? { ...p, children: (p.children||[]).map((cc,ci)=> ci===cidx? { ...cc, target: e.target.value || null }: cc) }: p))} />
+                          <Input defaultValue={ch.target || ""} onBlur={(e) => setItems(prev => prev.map((p, i) => i === idx ? { ...p, children: (p.children || []).map((cc, ci) => ci === cidx ? { ...cc, target: e.target.value || null } : cc) } : p))} />
                         </TableCell>
                         <TableCell className="text-gray-300">
-                          <select defaultValue={String(ch.active ? 1 : 0)} onChange={(e)=> setItems(prev => prev.map((p,i)=> i===idx? { ...p, children: (p.children||[]).map((cc,ci)=> ci===cidx? { ...cc, active: e.target.value === "1" }: cc) }: p))}
+                          <select defaultValue={String(ch.active ? 1 : 0)} onChange={(e) => setItems(prev => prev.map((p, i) => i === idx ? { ...p, children: (p.children || []).map((cc, ci) => ci === cidx ? { ...cc, active: e.target.value === "1" } : cc) } : p))}
                             className="bg-neutral-800 border border-orange-900 rounded px-2 py-1">
                             <option value="1">Yes</option>
                             <option value="0">No</option>
                           </select>
                         </TableCell>
                         <TableCell className="text-gray-300 flex gap-2">
-                          <Button variant="outline" className="border-green-700 text-green-400 hover:bg-green-900/30" onClick={()=> {
+                          <Button variant="outline" className="border-green-700 text-green-400 hover:bg-green-900/30" onClick={() => {
                             const label = prompt("Submenu label?")?.trim() || ""
                             if (!label) return
                             const href = prompt("Submenu href? (e.g., /path or /#section)")?.trim() || ""
                             if (!href) return
-                          addSubUnderSub(idx, cidx, { label, href })
+                            addSubUnderSub(idx, cidx, { label, href })
                           }}>Add Sub</Button>
-                          <Button variant="outline" className="border-orange-700 text-orange-400 hover:bg-orange-900/30" onClick={()=> moveSub(idx, cidx, -1)}>Up</Button>
-                          <Button variant="outline" className="border-orange-700 text-orange-400 hover:bg-orange-900/30" onClick={()=> moveSub(idx, cidx, 1)}>Down</Button>
-                          <Button variant="outline" className="border-red-700 text-red-400 hover:bg-red-900/30" onClick={()=> removeSub(idx, cidx)}>Delete</Button>
-                          </TableCell>
+                          <Button variant="outline" className="border-orange-700 text-orange-400 hover:bg-orange-900/30" onClick={() => moveSub(idx, cidx, -1)}>Up</Button>
+                          <Button variant="outline" className="border-orange-700 text-orange-400 hover:bg-orange-900/30" onClick={() => moveSub(idx, cidx, 1)}>Down</Button>
+                          <Button variant="outline" className="border-red-700 text-red-400 hover:bg-red-900/30" onClick={() => removeSub(idx, cidx)}>Delete</Button>
+                        </TableCell>
                       </TableRow>
                       {(ch.children || []).map((g, gidx) => (
                         <TableRow key={`row-${idx}-child-${cidx}-grand-${gidx}`}>
                           <TableCell className="text-gray-500 pl-16">{`${idx + 1}.${cidx + 1}.${gidx + 1}`}</TableCell>
                           <TableCell className="text-gray-300">
-                            <Input defaultValue={g.label} onBlur={(e)=> setItems(prev => prev.map((p,i)=> i===idx? {
+                            <Input defaultValue={g.label} onBlur={(e) => setItems(prev => prev.map((p, i) => i === idx ? {
                               ...p,
-                              children: (p.children||[]).map((cc,ci)=> ci===cidx? {
+                              children: (p.children || []).map((cc, ci) => ci === cidx ? {
                                 ...cc,
-                                children: (cc.children||[]).map((gg,gi)=> gi===gidx? { ...gg, label: e.target.value } : gg)
+                                children: (cc.children || []).map((gg, gi) => gi === gidx ? { ...gg, label: e.target.value } : gg)
                               } : cc)
                             } : p))} />
                           </TableCell>
                           <TableCell className="text-gray-300">
-                            <Input defaultValue={g.href} onBlur={(e)=> setItems(prev => prev.map((p,i)=> i===idx? {
+                            <Input defaultValue={g.href} onBlur={(e) => setItems(prev => prev.map((p, i) => i === idx ? {
                               ...p,
-                              children: (p.children||[]).map((cc,ci)=> ci===cidx? {
+                              children: (p.children || []).map((cc, ci) => ci === cidx ? {
                                 ...cc,
-                                children: (cc.children||[]).map((gg,gi)=> gi===gidx? { ...gg, href: e.target.value } : gg)
+                                children: (cc.children || []).map((gg, gi) => gi === gidx ? { ...gg, href: e.target.value } : gg)
                               } : cc)
                             } : p))} />
                           </TableCell>
                           <TableCell className="text-gray-300">
-                            <Input defaultValue={g.target || ""} onBlur={(e)=> setItems(prev => prev.map((p,i)=> i===idx? {
+                            <Input defaultValue={g.target || ""} onBlur={(e) => setItems(prev => prev.map((p, i) => i === idx ? {
                               ...p,
-                              children: (p.children||[]).map((cc,ci)=> ci===cidx? {
+                              children: (p.children || []).map((cc, ci) => ci === cidx ? {
                                 ...cc,
-                                children: (cc.children||[]).map((gg,gi)=> gi===gidx? { ...gg, target: e.target.value || null } : gg)
+                                children: (cc.children || []).map((gg, gi) => gi === gidx ? { ...gg, target: e.target.value || null } : gg)
                               } : cc)
                             } : p))} />
                           </TableCell>
                           <TableCell className="text-gray-300">
-                            <select defaultValue={String(g.active ? 1 : 0)} onChange={(e)=> setItems(prev => prev.map((p,i)=> i===idx? {
+                            <select defaultValue={String(g.active ? 1 : 0)} onChange={(e) => setItems(prev => prev.map((p, i) => i === idx ? {
                               ...p,
-                              children: (p.children||[]).map((cc,ci)=> ci===cidx? {
+                              children: (p.children || []).map((cc, ci) => ci === cidx ? {
                                 ...cc,
-                                children: (cc.children||[]).map((gg,gi)=> gi===gidx? { ...gg, active: e.target.value === "1" } : gg)
+                                children: (cc.children || []).map((gg, gi) => gi === gidx ? { ...gg, active: e.target.value === "1" } : gg)
                               } : cc)
                             } : p))} className="bg-neutral-800 border border-orange-900 rounded px-2 py-1">
                               <option value="1">Yes</option>
                               <option value="0">No</option>
-                          </select>
+                            </select>
                           </TableCell>
                           <TableCell className="text-gray-300 flex gap-2">
-                            <Button variant="outline" className="border-orange-700 text-orange-400 hover:bg-orange-900/30" onClick={()=> moveSubUnderSub(idx, cidx, gidx, -1)}>Up</Button>
-                            <Button variant="outline" className="border-orange-700 text-orange-400 hover:bg-orange-900/30" onClick={()=> moveSubUnderSub(idx, cidx, gidx, 1)}>Down</Button>
-                            <Button variant="outline" className="border-red-700 text-red-400 hover:bg-red-900/30" onClick={()=> removeSubUnderSub(idx, cidx, gidx)}>Delete</Button>
+                            <Button variant="outline" className="border-orange-700 text-orange-400 hover:bg-orange-900/30" onClick={() => moveSubUnderSub(idx, cidx, gidx, -1)}>Up</Button>
+                            <Button variant="outline" className="border-orange-700 text-orange-400 hover:bg-orange-900/30" onClick={() => moveSubUnderSub(idx, cidx, gidx, 1)}>Down</Button>
+                            <Button variant="outline" className="border-red-700 text-red-400 hover:bg-red-900/30" onClick={() => removeSubUnderSub(idx, cidx, gidx)}>Delete</Button>
                           </TableCell>
                         </TableRow>
                       ))}
-                    </>
+                    </Fragment>
                   ))}
-                </>
+                </Fragment>
               ))
             )}
           </TableBody>

@@ -13,26 +13,8 @@ export default function SaasHeader() {
   const [auth, setAuth] = useState<{ user: any; role: string } | null>(null)
   const { state, dispatch } = useCart()
   const itemCount = state.items.reduce((n, it) => n + it.quantity, 0)
-  const defaultNav = [
-    { href: "/", label: "Home" },
-    { href: "/#buy", label: "Buy FASTag" },
-    { href: "/#recharge", label: "Recharge FASTag" },
-    {
-      href: "/support",
-      label: "Get Support",
-      children: [
-        { href: "/support/kyc-update", label: "KYC Update" },
-        { href: "/support/blacklist-removal", label: "Blacklist Removal" },
-        { href: "/support/tag-replacement", label: "Tag Replacement" },
-        { href: "/support/dispute", label: "Dispute Help" },
-      ],
-    },
-    { href: "/products", label: "Products" },
-    { href: "/locations", label: "Locations" },
-    { href: "/#blog", label: "Blog" },
-    { href: "/contact", label: "Contact Us" },
-  ]
-  const [nav, setNav] = useState<{ href: string; label: string; target?: string; children?: any[] }[]>(defaultNav)
+  // No default static menu - all menus are managed by admin through the database
+  const [nav, setNav] = useState<{ href: string; label: string; target?: string; children?: any[] }[]>([])
   const MENU_SLUG = (process.env.NEXT_PUBLIC_MENU_SLUG || "main").toLowerCase()
   const SUB_BUYFASTAG = (process.env.NEXT_PUBLIC_MENU_SUB_BUYFASTAG || "").toLowerCase()
 
@@ -69,7 +51,8 @@ export default function SaasHeader() {
           arr.forEach((n) => n.children && sortTree(n.children))
         }
         sortTree(roots)
-        const base = roots.length ? roots.map(({ sort_order, ...rest }) => rest) : defaultNav
+        // Only use database menus - no fallback to static menu
+        const base = roots.length ? roots.map(({ sort_order, ...rest }) => rest) : []
         setNav(base)
 
         // Optionally attach submenu from another slug to the Buy FASTag item
