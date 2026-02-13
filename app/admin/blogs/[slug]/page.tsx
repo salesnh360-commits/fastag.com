@@ -143,6 +143,57 @@ export default function EditBlogPostPage() {
                 value={post.youtube_url ?? ""}
                 onChange={(e) => setPost({ ...(post as Post), youtube_url: e.target.value })}
               />
+              {(() => {
+                const getYouTubeId = (url: string) => {
+                  if (!url) return null
+                  const srcMatch = url.match(/src=["']([^"']+)["']/)
+                  if (srcMatch) url = srcMatch[1]
+                  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|shorts\/)([^#&?]*).*/
+                  const match = url.match(regExp)
+                  return (match && match[2].length === 11) ? match[2] : null
+                }
+
+                const getInstagramId = (url: string) => {
+                  if (!url) return null
+                  const regExp = /(?:instagram\.com\/(?:p|reel|tv)\/)([\w-]+)/
+                  const match = url.match(regExp)
+                  return match ? match[1] : null
+                }
+
+                const vidId = getYouTubeId(post.youtube_url || "") || getYouTubeId(post.image_url || "")
+                const instaId = getInstagramId(post.youtube_url || "") || getInstagramId(post.image_url || "")
+
+                return (
+                  <div className="mt-2">
+                    {vidId ? (
+                      <div className="aspect-video w-64">
+                        <iframe
+                          className="w-full h-full rounded border border-orange-900"
+                          src={`https://www.youtube.com/embed/${vidId}`}
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                        />
+                      </div>
+                    ) : instaId ? (
+                      <div className="flex justify-start">
+                        <iframe
+                          className="rounded-xl border border-orange-900 bg-white"
+                          src={`https://www.instagram.com/p/${instaId}/embed`}
+                          width="320"
+                          height="400"
+                          frameBorder="0"
+                          scrolling="no"
+                          // @ts-ignore
+                          allowtransparency="true"
+                        />
+                      </div>
+                    ) : (post.image_url && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={post.image_url} alt="preview" className="h-32 w-auto rounded border border-orange-900" onError={(e) => (e.currentTarget.style.display = 'none')} />
+                    ))}
+                  </div>
+                )
+              })()}
               <textarea
                 placeholder="Content"
                 value={post.content}

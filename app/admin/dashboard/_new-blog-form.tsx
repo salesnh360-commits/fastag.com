@@ -90,10 +90,57 @@ export default function NewBlogForm() {
             <div className="text-xs text-gray-400">Blog Image</div>
             <Input placeholder="or paste image URL" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} />
             <Input type="file" accept="image/*" onChange={(e) => e.target.files?.[0] && upload(e.target.files[0], "image")} />
-            {imageUrl && (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={imageUrl} alt="preview" className="mt-2 h-24 w-auto rounded" />
-            )}
+            {(() => {
+              const getYouTubeId = (url: string) => {
+                if (!url) return null
+                // Handle if user pasted full iframe code
+                const srcMatch = url.match(/src=["']([^"']+)["']/)
+                if (srcMatch) url = srcMatch[1]
+
+                const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|shorts\/)([^#&?]*).*/
+                const match = url.match(regExp)
+                return (match && match[2].length === 11) ? match[2] : null
+              }
+
+              const getInstagramId = (url: string) => {
+                if (!url) return null
+                const regExp = /(?:instagram\.com\/(?:p|reel|tv)\/)([\w-]+)/
+                const match = url.match(regExp)
+                return match ? match[1] : null
+              }
+
+              const vidId = getYouTubeId(imageUrl) || getYouTubeId(youtubeUrl)
+              const instaId = getInstagramId(imageUrl) || getInstagramId(youtubeUrl)
+
+              return vidId ? (
+                <div className="mt-2 aspect-video w-48">
+                  <iframe
+                    className="w-full h-full rounded border border-orange-900"
+                    src={`https://www.youtube.com/embed/${vidId}`}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                </div>
+              ) : instaId ? (
+                <div className="mt-2">
+                  <iframe
+                    className="rounded-xl border border-orange-900 bg-white"
+                    src={`https://www.instagram.com/p/${instaId}/embed`}
+                    width="240"
+                    height="300"
+                    frameBorder="0"
+                    scrolling="no"
+                    // @ts-ignore
+                    allowtransparency="true"
+                  />
+                </div>
+              ) : (
+                imageUrl && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={imageUrl} alt="preview" className="mt-2 h-24 w-auto rounded" onError={(e) => (e.currentTarget.style.display = 'none')} />
+                )
+              )
+            })()}
           </div>
           <div className="space-y-2">
             <div className="text-xs text-gray-400">Document (PDF/Doc)</div>
@@ -105,7 +152,7 @@ export default function NewBlogForm() {
 
         <div className="space-y-2">
           <div className="text-xs text-gray-400">YouTube URL</div>
-          <Input placeholder="https://www.youtube.com/watch?v=..." value={youtubeUrl} onChange={(e) => setYoutubeUrl(e.target.value)} />
+          <Input placeholder="https://www.youtube.com/watch?v=... (or paste embed code)" value={youtubeUrl} onChange={(e) => setYoutubeUrl(e.target.value)} />
         </div>
 
         <div className="flex justify-end">
