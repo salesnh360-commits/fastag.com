@@ -105,6 +105,7 @@ export default function ShopsManager() {
         city: j.city || prev.city,
         state: j.state || prev.state,
         pincode: j.pincode || prev.pincode,
+        phone: j.phone || prev.phone,
         lat: typeof j.lat === 'number' ? j.lat : prev.lat,
         lng: typeof j.lng === 'number' ? j.lng : prev.lng,
         gbp_url: j.gbp_url || prev.gbp_url,

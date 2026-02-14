@@ -8,12 +8,16 @@ type ResolveBody = {
 export async function POST(req: Request) {
   try {
     const body: ResolveBody = await req.json().catch(() => ({} as any))
-    const raw = (body.url || body.query || "").trim()
+    let raw = (body.url || body.query || "").trim()
     if (!raw) return NextResponse.json({ error: "Missing url or query" }, { status: 400 })
 
-    // Try to normalize input into a meaningful search string if a generic Google URL is provided
-    const normalized = normalizeInput(raw)
+    // Resolve shortened URLs
+    if (isShortUrl(raw)) {
+      const resolved = await resolveShortUrl(raw)
+      if (resolved) raw = resolved
+    }
 
+    const normalized = normalizeInput(raw)
     const key = process.env.GOOGLE_MAPS_API_KEY
 
     // Prefer Google Places if key is available
@@ -31,7 +35,7 @@ export async function POST(req: Request) {
         // Place details for address components
         const detUrl = new URL("https://maps.googleapis.com/maps/api/place/details/json")
         detUrl.searchParams.set("place_id", cand.place_id)
-        detUrl.searchParams.set("fields", "place_id,name,formatted_address,geometry,address_component,url")
+        detUrl.searchParams.set("fields", "place_id,name,formatted_address,geometry,address_component,url,formatted_phone_number")
         detUrl.searchParams.set("key", key)
         const det = await fetch(detUrl, { cache: "no-store" })
         const dj = await det.json()
@@ -49,6 +53,7 @@ export async function POST(req: Request) {
             address: r.formatted_address || cand.formatted_address,
             city, state, pincode,
             lat: loc?.lat, lng: loc?.lng,
+            phone: r.formatted_phone_number,
             gbp_url: gbpUrl,
             place_id: r.place_id,
             source: "google",
@@ -58,13 +63,32 @@ export async function POST(req: Request) {
     }
 
     // Fallback: try to parse coordinates from URL and reverse geocode with Nominatim
-    const fromUrl = tryParseLatLngFromString(normalized)
+    // Try original 'raw' URL first as it might contain coords that normalizeInput striped
+    let fromUrl = tryParseLatLngFromString(raw)
+    // If not found, try normalized
+    if (!fromUrl) fromUrl = tryParseLatLngFromString(normalized)
+
     if (fromUrl) {
       const rev = await nominatimReverse(fromUrl.lat, fromUrl.lng)
-      return NextResponse.json({ ...rev, lat: fromUrl.lat, lng: fromUrl.lng, gbp_url: makeMapsLink(fromUrl.lat, fromUrl.lng), source: "nominatim" })
+      // Attempt to extract name from URL if Nominatim name is generic (like "Road name")
+      let name = rev?.name
+      if (raw.includes("/place/")) {
+        const uName = extractNameFromMapsUrl(raw)
+        // If extracted name is better than Nominatim's (which might be just address), prefer it
+        // Or if Nominatim failed completely but we have coords
+        if (uName) name = uName
+      }
+      return NextResponse.json({
+        ...rev,
+        name: name || rev?.name,
+        lat: fromUrl.lat,
+        lng: fromUrl.lng,
+        gbp_url: makeMapsLink(fromUrl.lat, fromUrl.lng),
+        source: "nominatim"
+      })
     }
 
-    // Fallback: forward geocode text query
+    // Fallback: forward geocode text query (normalized)
     const fwd = await nominatimSearch(normalized)
     if (fwd) {
       return NextResponse.json({ ...fwd, gbp_url: makeMapsLink(fwd.lat, fwd.lng), source: "nominatim" })
@@ -72,18 +96,58 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ error: "No results found" }, { status: 404 })
   } catch (e) {
+    console.error("Resolve error:", e)
     return NextResponse.json({ error: "Resolve failed" }, { status: 500 })
   }
 }
 
+function isShortUrl(s: string) {
+  return s.match(/https?:\/\/(maps\.app\.goo\.gl|goo\.gl|g\.co|bit\.ly|t\.co)\//)
+}
+
+async function resolveShortUrl(url: string): Promise<string | null> {
+  try {
+    const res = await fetch(url, { method: "HEAD", redirect: "manual" })
+    if (res.status >= 300 && res.status < 400) {
+      const loc = res.headers.get("location")
+      if (loc) return loc
+    }
+    // If HEAD fails to give location, try GET following redirects
+    const res2 = await fetch(url, { method: "GET" })
+    return res2.url
+  } catch {
+    return null
+  }
+}
+
+function extractNameFromMapsUrl(s: string): string | null {
+  try {
+    const u = new URL(s)
+    const idx = u.pathname.indexOf("/place/")
+    if (idx >= 0) {
+      const rest = u.pathname.slice(idx + 7)
+      const seg = rest.split("/")[0]
+      if (seg) return decodeURIComponent(seg.replace(/\+/g, " "))
+    }
+  } catch { }
+  return null
+}
+
 function tryParseLatLngFromString(s: string): { lat: number; lng: number } | null {
   try {
-    // patterns like @11.03,76.97, or query=11.03,76.97
-    const at = s.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/)
-    if (at) return { lat: Number(at[1]), lng: Number(at[2]) }
+    // 1. Google Maps Data parameters !3d...!4d... (most accurate for exact pin)
+    const d3 = s.match(/!3d(-?\d+\.\d+)/)
+    const d4 = s.match(/!4d(-?\d+\.\d+)/)
+    if (d3 && d4) return { lat: Number(d3[1]), lng: Number(d4[1]) }
+
+    // 2. Query param q=lat,lng
     const q = s.match(/[?&](?:q|query)=(-?\d+\.\d+),(-?\d+\.\d+)/)
     if (q) return { lat: Number(q[1]), lng: Number(q[2]) }
-  } catch {}
+
+    // 3. Viewport @lat,lng (fallback)
+    const at = s.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/)
+    if (at) return { lat: Number(at[1]), lng: Number(at[2]) }
+  } catch { }
   return null
 }
 
@@ -100,12 +164,8 @@ function normalizeInput(s: string): string {
       const query = u.searchParams.get("query") || u.searchParams.get("q")
       if (query) return query
       // Extract name from /maps/place/<name>/...
-      const idx = u.pathname.indexOf("/place/")
-      if (idx >= 0) {
-        const rest = u.pathname.slice(idx + 7) // after '/place/'
-        const seg = rest.split("/")[0]
-        if (seg) return decodeURIComponent(seg.replace(/\+/g, " "))
-      }
+      const name = extractNameFromMapsUrl(s)
+      if (name) return name
     }
     // g.page vanity URLs -> take path component
     if (u.hostname === "g.page" && u.pathname && u.pathname !== "/") {
@@ -119,21 +179,26 @@ function normalizeInput(s: string): string {
 
 async function nominatimReverse(lat: number, lon: number) {
   const headers = { "User-Agent": "nh360-fastag/1.0 (support@nh360fastag.com)" }
-  const u = `https://nominatim.openstreetmap.org/reverse?lat=${encodeURIComponent(String(lat))}&lon=${encodeURIComponent(String(lon))}&format=jsonv2`
+  // Add extratags=1 to get phone number if available
+  const u = `https://nominatim.openstreetmap.org/reverse?lat=${encodeURIComponent(String(lat))}&lon=${encodeURIComponent(String(lon))}&format=jsonv2&extratags=1`
   const r = await fetch(u, { headers, cache: "no-store" })
   const j = await r.json().catch(() => null as any)
-  const addr = j?.address || {}
-  const name = j?.name || j?.display_name?.split(",")[0]
-  const address = j?.display_name
+  if (!j) return null
+  const addr = j.address || {}
+  const name = j.name || j.display_name?.split(",")[0]
+  const address = j.display_name
   const city = addr.city || addr.town || addr.village || addr.county
   const state = addr.state
   const pincode = addr.postcode
-  return { name, address, city, state, pincode }
+  const extra = j.extratags || {}
+  const phone = extra.phone || extra["contact:phone"] || extra["contact:mobile"]
+  return { name, address, city, state, pincode, phone }
 }
 
 async function nominatimSearch(q: string) {
   const headers = { "User-Agent": "nh360-fastag/1.0 (support@nh360fastag.com)" }
-  const u = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=jsonv2&addressdetails=1&limit=1`
+  // Add extratags=1
+  const u = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=jsonv2&addressdetails=1&limit=1&extratags=1`
   const r = await fetch(u, { headers, cache: "no-store" })
   const arr = await r.json().catch(() => [])
   const first = Array.isArray(arr) ? arr[0] : null
@@ -146,7 +211,9 @@ async function nominatimSearch(q: string) {
   const city = addr.city || addr.town || addr.village || addr.county
   const state = addr.state
   const pincode = addr.postcode
-  return { name, address, city, state, pincode, lat, lng }
+  const extra = first.extratags || {}
+  const phone = extra.phone || extra["contact:phone"] || extra["contact:mobile"]
+  return { name, address, city, state, pincode, lat, lng, phone }
 }
 
 function makeMapsLink(lat: number, lng: number) {
