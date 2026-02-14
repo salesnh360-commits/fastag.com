@@ -90,9 +90,16 @@ export default function SaasFooter() {
     }
   }, [products])
 
-  // Limit the product list to a few items to keep footer compact
+  // Limit the product list to a few items to keep footer compact, ensuring unique names
   const productLinks = useMemo(() => {
-    return products.slice(0, 8).map((p) => ({ id: p.id, name: p.name }))
+    const unique = new Map()
+    for (const p of products) {
+      const normalizedName = (p.name || "").trim().toLowerCase()
+      if (normalizedName && !unique.has(normalizedName)) {
+        unique.set(normalizedName, p)
+      }
+    }
+    return Array.from(unique.values()).slice(0, 8).map((p) => ({ id: p.id, name: p.name }))
   }, [products])
 
   return (
